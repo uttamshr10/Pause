@@ -16,6 +16,8 @@ class DailyCheckInSerializer(serializers.ModelSerializer):
             'work_satisfaction',
             'notes',
             'checkin_date',
+            'burnout_score',
+            'risk_level',
             'created_at',
         ]
 

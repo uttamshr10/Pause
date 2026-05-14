@@ -18,6 +18,8 @@ class DailyCheckIn(models.Model):
     work_satisfaction = models.IntegerField()
 
     notes = models.TextField(blank=True, null=True)
+    burnout_score = models.FloatField(default=0)
+    risk_level = models.CharField(max_length=20, default='low')
 
     checkin_date = models.DateField(auto_now_add=True)
     created_at = models.DateTimeField(auto_now_add=True)
