@@ -11,6 +11,8 @@ type CheckIn = {
   work_satisfaction: number;
   notes?: string;
   checkin_date: string;
+  burnout_score: number;
+  risk_level: string;
   created_at: string;
 };
 
@@ -86,6 +88,14 @@ const CheckInHistoryPage = () => {
                   <td className="p-3 text-gray-500">
                     {item.notes || "-"}
                   </td>
+                  <td>{item.burnout_score}</td>
+                  <td className={
+                    item.risk_level === "high"
+                    ? "text-red-500"
+                    : item.risk_level === "medium"
+                    ? "text-yellow-500"
+                    : "text-green-500"
+                  }>{item.risk_level}</td>
                 </tr>
               ))}
             </tbody>
