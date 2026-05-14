@@ -1,3 +1,29 @@
-from django.shortcuts import render
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
-# Create your views here.
+
+from wellness.models import DailyCheckIn
+
+
+class WeeklyTrendView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        from datetime import timedelta
+        from django.utils.timezone import now
+        last_7_days = now().date() - timedelta(days=7)
+        checkins = DailyCheckIn.objects.filter(user=user, checkin_date__gte=last_7_days).order_by("checkin_date")
+
+        data = [
+            {
+                "date": c.checkin_date,
+                "burnout_score": c.burnout_score,
+                "stress": c.stress_level,
+                "mood": c.mood_score,
+            }
+            for c in checkins
+        ]
+
+        return Response(data)

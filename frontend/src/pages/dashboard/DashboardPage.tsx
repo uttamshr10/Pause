@@ -1,8 +1,22 @@
 import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getWeeklyTrend } from "../../api/analyticsApi";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 
 const DashboardPage = () => {
   const username = localStorage.getItem("username") || "User";
-
+  const [trendData, setTrendData] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getWeeklyTrend();
+        setTrendData(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
+  }, []);
   return (
     <div className="space-y-6">
       
@@ -45,15 +59,27 @@ const DashboardPage = () => {
 
       </div>
 
-      {/* Placeholder for future analytics */}
       <div className="bg-white p-6 rounded-2xl shadow">
-        <h2 className="text-lg font-semibold mb-2">
-          Analytics (Coming Soon)
-        </h2>
-        <p className="text-gray-500 text-sm">
-          Burnout score, trends, and insights will appear here.
-        </p>
-      </div>
+  <h2 className="text-lg font-semibold mb-4">
+    Burnout Trend (Last 7 Days)
+  </h2>
+
+  <div className="h-64">
+    <ResponsiveContainer width="100%" height="100%">
+      <LineChart data={trendData}>
+        <XAxis dataKey="date" />
+        <YAxis />
+        <Tooltip />
+        <Line
+          type="monotone"
+          dataKey="burnout_score"
+          stroke="#000"
+          strokeWidth={2}
+        />
+      </LineChart>
+    </ResponsiveContainer>
+  </div>
+</div>
 
     </div>
   );
