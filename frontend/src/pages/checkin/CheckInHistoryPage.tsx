@@ -72,6 +72,8 @@ const CheckInHistoryPage = () => {
                 <th className="p-3">Energy</th>
                 <th className="p-3">Satisfaction</th>
                 <th className="p-3">Notes</th>
+                <th className="p-3">Burnout Score</th>
+                <th className="p-3">Risk Level</th>
               </tr>
             </thead>
 
