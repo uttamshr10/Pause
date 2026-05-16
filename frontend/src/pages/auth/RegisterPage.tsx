@@ -9,7 +9,6 @@ const RegisterPage = () => {
     username: "",
     email: "",
     password: "",
-    role: "employee",
     organization: "",
     designation: "",
   });
@@ -34,7 +33,7 @@ const RegisterPage = () => {
     try {
       await registerUser(form);
       navigate("/login");
-    } catch (err: any) {
+    } catch {
       setError("Registration failed. Please check your details.");
     } finally {
       setLoading(false);
@@ -42,112 +41,103 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold text-center mb-2">
-          Create Pause Account
+    <div className="min-h-screen grid md:grid-cols-2 bg-gray-50">
+      <div className="hidden md:flex flex-col justify-center p-16 relative bg-gradient-to-br from-purple-50 via-white to-white">
+        <h1 className="absolute top-8 left-12 text-xl font-semibold text-slate-700 tracking-tight">
+          Pause
         </h1>
 
-        <p className="text-sm text-gray-500 text-center mb-6">
-          Start tracking your wellness and burnout risk patterns.
+        <h2 className="text-5xl font-extrabold text-slate-900 leading-tight mb-6">
+          Start.
+          <br />
+          Track.
+          <br />
+          <span className="text-purple-600">Improve.</span>
+        </h2>
+
+        <p className="text-gray-700 text-lg max-w-md">
+          Create your Pause account and begin monitoring your wellness patterns,
+          burnout risk, and daily recovery signals.
         </p>
+      </div>
 
-        {error && (
-          <p className="text-red-500 text-sm mb-4 text-center">
-            {error}
+      <div className="flex items-center justify-center bg-gray-100 px-6 py-10">
+        <div className="bg-white p-10 rounded-3xl shadow-xl border border-gray-100 w-full max-w-md">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+            Create Account
+          </h2>
+
+          <p className="text-gray-500 mb-6 text-sm">
+            Sign up to start your wellness tracking journey.
           </p>
-        )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm mb-1">Username</label>
+          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
+          <form onSubmit={handleSubmit} className="space-y-4">
             <input
               type="text"
               name="username"
+              placeholder="Username"
               value={form.username}
               onChange={handleChange}
               required
-              className="w-full border p-2 rounded-lg"
+              className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
             />
-          </div>
 
-          <div>
-            <label className="block text-sm mb-1">Email</label>
             <input
               type="email"
               name="email"
+              placeholder="Email address"
               value={form.email}
               onChange={handleChange}
               required
-              className="w-full border p-2 rounded-lg"
+              className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
             />
-          </div>
 
-          <div>
-            <label className="block text-sm mb-1">Password</label>
             <input
               type="password"
               name="password"
+              placeholder="Password"
               value={form.password}
               onChange={handleChange}
               required
-              className="w-full border p-2 rounded-lg"
+              className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
             />
-          </div>
 
-          <div>
-            <label className="block text-sm mb-1">Role</label>
-            <select
-              name="role"
-              value={form.role}
-              onChange={handleChange}
-              className="w-full border p-2 rounded-lg"
-            >
-              <option value="employee">Employee</option>
-              <option value="manager">Manager</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm mb-1">Organization</label>
             <input
               type="text"
               name="organization"
+              placeholder="Organization"
               value={form.organization}
               onChange={handleChange}
-              className="w-full border p-2 rounded-lg"
-              placeholder="Example: Pause"
+              className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
             />
-          </div>
 
-          <div>
-            <label className="block text-sm mb-1">Designation</label>
             <input
               type="text"
               name="designation"
+              placeholder="Designation"
               value={form.designation}
               onChange={handleChange}
-              className="w-full border p-2 rounded-lg"
-              placeholder="Example: Software Developer"
+              className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
             />
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-black text-white py-2 rounded-lg hover:opacity-90 disabled:opacity-60"
-          >
-            {loading ? "Creating account..." : "Register"}
-          </button>
-        </form>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-gradient-to-r from-purple-600 to-purple-500 text-white py-3 rounded-xl hover:opacity-90 transition shadow-md disabled:opacity-60"
+            >
+              {loading ? "Creating account..." : "Create Account"}
+            </button>
+          </form>
 
-        <p className="text-sm text-center mt-4">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-500">
-            Login
-          </Link>
-        </p>
+          <p className="text-sm text-center mt-4 text-gray-600">
+            Already have an account?{" "}
+            <Link to="/login" className="text-purple-600 font-medium">
+              Login
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
