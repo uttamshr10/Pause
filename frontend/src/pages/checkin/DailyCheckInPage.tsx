@@ -44,7 +44,7 @@ const DailyCheckInPage = () => {
       setTimeout(() => {
         navigate("/check-in/history");
       }, 800);
-    } catch (err: any) {
+    } catch {
       setError("You may have already submitted today's check-in.");
     } finally {
       setLoading(false);
@@ -56,16 +56,28 @@ const DailyCheckInPage = () => {
     name,
     value,
     helper,
+    lowLabel,
+    highLabel,
   }: {
     label: string;
     name: keyof typeof form;
     value: number;
     helper: string;
+    lowLabel: string;
+    highLabel: string;
   }) => (
-    <div>
-      <div className="flex justify-between mb-1">
-        <label className="text-sm font-medium">{label}</label>
-        <span className="text-sm font-semibold">{value}/10</span>
+    <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+      <div className="flex justify-between items-start mb-3">
+        <div>
+          <label className="text-sm font-semibold text-gray-900">
+            {label}
+          </label>
+          <p className="text-xs text-gray-500 mt-1">{helper}</p>
+        </div>
+
+        <span className="bg-purple-100 text-purple-700 text-sm font-semibold px-3 py-1 rounded-full">
+          {value}/10
+        </span>
       </div>
 
       <input
@@ -75,112 +87,155 @@ const DailyCheckInPage = () => {
         max="10"
         value={value}
         onChange={handleChange}
-        className="w-full"
+        className="w-full accent-purple-600"
       />
 
-      <p className="text-xs text-gray-500">{helper}</p>
+      <div className="flex justify-between text-xs text-gray-400 mt-2">
+        <span>{lowLabel}</span>
+        <span>{highLabel}</span>
+      </div>
     </div>
   );
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div className="bg-white p-6 rounded-2xl shadow">
-        <h1 className="text-2xl font-bold mb-2">Daily Wellness Check-in</h1>
-        <p className="text-gray-600 text-sm">
-          Record your daily wellness signals. This helps Pause analyze burnout
-          patterns over time.
+    <div className="max-w-5xl mx-auto space-y-8">
+      <div className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-3xl p-8 text-white shadow-lg">
+        <p className="text-sm text-purple-100 mb-2">Daily Wellness Check-in</p>
+
+        <h1 className="text-3xl font-bold mb-3">
+          How are you feeling today?
+        </h1>
+
+        <p className="text-purple-100 max-w-2xl">
+          Your daily check-in helps Pause understand your wellness signals and
+          detect burnout patterns over time.
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-6 rounded-2xl shadow space-y-6"
-      >
+      <form onSubmit={handleSubmit} className="space-y-6">
         {success && (
-          <p className="text-green-600 text-sm bg-green-50 p-3 rounded-lg">
+          <div className="bg-green-50 border border-green-100 text-green-700 p-4 rounded-2xl text-sm">
             {success}
-          </p>
+          </div>
         )}
 
         {error && (
-          <p className="text-red-600 text-sm bg-red-50 p-3 rounded-lg">
+          <div className="bg-red-50 border border-red-100 text-red-700 p-4 rounded-2xl text-sm">
             {error}
-          </p>
+          </div>
         )}
 
-        <RangeInput
-          label="Mood Score"
-          name="mood_score"
-          value={form.mood_score}
-          helper="1 = very low mood, 10 = very positive mood"
-        />
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+          <div className="mb-6">
+            <h2 className="text-xl font-bold text-gray-900">
+              Wellness Signals
+            </h2>
+            <p className="text-sm text-gray-500 mt-1">
+              Rate each factor based on your current condition.
+            </p>
+          </div>
 
-        <RangeInput
-          label="Stress Level"
-          name="stress_level"
-          value={form.stress_level}
-          helper="1 = very low stress, 10 = very high stress"
-        />
+          <div className="grid md:grid-cols-2 gap-5">
+            <RangeInput
+              label="Mood Score"
+              name="mood_score"
+              value={form.mood_score}
+              helper="How positive or low your mood feels today."
+              lowLabel="Low mood"
+              highLabel="Positive"
+            />
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Sleep Hours</label>
-          <input
-            type="number"
-            name="sleep_hours"
-            value={form.sleep_hours}
-            onChange={handleChange}
-            min="0"
-            max="24"
-            step="0.5"
-            className="w-full border p-2 rounded-lg"
-          />
-          <p className="text-xs text-gray-500">
-            Enter total sleep hours from last night.
-          </p>
+            <RangeInput
+              label="Stress Level"
+              name="stress_level"
+              value={form.stress_level}
+              helper="How much pressure or stress you feel."
+              lowLabel="Calm"
+              highLabel="Stressed"
+            />
+
+            <RangeInput
+              label="Workload Level"
+              name="workload_level"
+              value={form.workload_level}
+              helper="How heavy your workload feels."
+              lowLabel="Light"
+              highLabel="Overloaded"
+            />
+
+            <RangeInput
+              label="Energy Level"
+              name="energy_level"
+              value={form.energy_level}
+              helper="How much energy you have right now."
+              lowLabel="Low energy"
+              highLabel="Energized"
+            />
+
+            <RangeInput
+              label="Work Satisfaction"
+              name="work_satisfaction"
+              value={form.work_satisfaction}
+              helper="How satisfied you feel with your work today."
+              lowLabel="Low"
+              highLabel="Satisfied"
+            />
+
+            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+              <label className="text-sm font-semibold text-gray-900">
+                Sleep Hours
+              </label>
+
+              <p className="text-xs text-gray-500 mt-1 mb-3">
+                Enter total sleep duration from last night.
+              </p>
+
+              <input
+                type="number"
+                name="sleep_hours"
+                value={form.sleep_hours}
+                onChange={handleChange}
+                min="0"
+                max="24"
+                step="0.5"
+                className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition bg-white"
+              />
+
+              <p className="text-xs text-gray-400 mt-2">
+                Recommended range: 7 to 8 hours
+              </p>
+            </div>
+          </div>
         </div>
 
-        <RangeInput
-          label="Workload Level"
-          name="workload_level"
-          value={form.workload_level}
-          helper="1 = very light workload, 10 = overloaded"
-        />
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            Reflection Note
+          </h2>
 
-        <RangeInput
-          label="Energy Level"
-          name="energy_level"
-          value={form.energy_level}
-          helper="1 = very low energy, 10 = very energetic"
-        />
+          <p className="text-sm text-gray-500 mb-4">
+            Optional, but useful for AI-assisted weekly insights later.
+          </p>
 
-        <RangeInput
-          label="Work Satisfaction"
-          name="work_satisfaction"
-          value={form.work_satisfaction}
-          helper="1 = very dissatisfied, 10 = very satisfied"
-        />
-
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Notes Optional
-          </label>
           <textarea
             name="notes"
             value={form.notes}
             onChange={handleChange}
-            rows={4}
-            className="w-full border p-2 rounded-lg"
-            placeholder="Write anything about your day..."
+            rows={5}
+            className="w-full border border-gray-200 p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition"
+            placeholder="Write anything about your day, workload, mood, or stress..."
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-black text-white py-2 rounded-lg hover:opacity-90 disabled:opacity-60"
-        >
-          {loading ? "Submitting..." : "Submit Check-in"}
-        </button>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-gradient-to-r from-purple-600 to-purple-500 text-white px-8 py-3 rounded-xl hover:opacity-90 transition shadow-md disabled:opacity-60"
+          >
+            {loading ? "Submitting..." : "Submit Check-in"}
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -18,7 +18,7 @@ const DashboardPage = () => {
   const [insight, setInsight] = useState("");
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDashboardData = async () => {
       try {
         const trend = await getWeeklyTrend();
         setTrendData(trend);
@@ -30,69 +30,134 @@ const DashboardPage = () => {
       }
     };
 
-    fetchData();
+    fetchDashboardData();
   }, []);
 
+  const latest = trendData[trendData.length - 1];
+
   return (
-    <div className="space-y-6">
-      <div className="bg-white p-6 rounded-2xl shadow">
-        <h1 className="text-2xl font-bold mb-2">
-          Welcome back, {username} 👋
+    <div className="space-y-8">
+      {/* HERO */}
+      <div className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-3xl p-8 text-white shadow-lg">
+        <p className="text-sm text-purple-100 mb-2">Welcome back</p>
+
+        <h1 className="text-3xl font-bold mb-3">
+          Hi {username}, here’s your wellness overview.
         </h1>
-        <p className="text-gray-600">
-          Track your daily wellness and understand your burnout patterns.
+
+        <p className="text-purple-100 max-w-2xl">
+          Pause helps you understand burnout patterns through daily check-ins,
+          trend analysis, and personalized wellness insights.
         </p>
       </div>
 
+      {/* QUICK STATS */}
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <p className="text-sm text-gray-500 mb-2">Latest Burnout Score</p>
+          <h2 className="text-3xl font-bold text-gray-900">
+            {latest ? latest.burnout_score : "--"}
+          </h2>
+          <p className="text-sm text-gray-500 mt-2">Out of 100</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <p className="text-sm text-gray-500 mb-2">Latest Stress Level</p>
+          <h2 className="text-3xl font-bold text-gray-900">
+            {latest ? latest.stress : "--"}
+          </h2>
+          <p className="text-sm text-gray-500 mt-2">Scale of 1 to 10</p>
+        </div>
+
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <p className="text-sm text-gray-500 mb-2">Latest Mood Score</p>
+          <h2 className="text-3xl font-bold text-gray-900">
+            {latest ? latest.mood : "--"}
+          </h2>
+          <p className="text-sm text-gray-500 mt-2">Scale of 1 to 10</p>
+        </div>
+      </div>
+
+      {/* MAIN GRID */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* CHART */}
+        <div className="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <div className="flex justify-between items-start mb-6">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                Burnout Trend
+              </h2>
+              <p className="text-sm text-gray-500">
+                Last 7 days wellness pattern
+              </p>
+            </div>
+          </div>
+
+          <div className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={trendData}>
+                <XAxis dataKey="date" />
+                <YAxis />
+                <Tooltip />
+                <Line
+                  type="monotone"
+                  dataKey="burnout_score"
+                  stroke="#7C3AED"
+                  strokeWidth={3}
+                  dot={{ r: 4 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* AI INSIGHT */}
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+          <p className="text-sm text-purple-600 font-medium mb-2">
+            AI Insight
+          </p>
+
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            Wellness Summary
+          </h2>
+
+          <p className="text-sm text-gray-600 leading-6">
+            {insight || "Generating your wellness insight..."}
+          </p>
+        </div>
+      </div>
+
+      {/* ACTION CARDS */}
       <div className="grid md:grid-cols-2 gap-6">
         <Link
           to="/check-in"
-          className="bg-black text-white p-6 rounded-2xl shadow hover:opacity-90"
+          className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition"
         >
-          <h2 className="text-lg font-semibold mb-2">Daily Check-in</h2>
-          <p className="text-sm">
-            Log your mood, stress, and energy levels for today.
+          <p className="text-sm text-purple-600 font-medium mb-2">
+            Daily Action
+          </p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            Submit Today’s Check-in
+          </h2>
+          <p className="text-sm text-gray-600">
+            Record your mood, sleep, workload, stress, and energy signals.
           </p>
         </Link>
 
         <Link
           to="/check-in/history"
-          className="bg-white p-6 rounded-2xl shadow hover:bg-gray-50"
+          className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition"
         >
-          <h2 className="text-lg font-semibold mb-2">View History</h2>
+          <p className="text-sm text-purple-600 font-medium mb-2">
+            History
+          </p>
+          <h2 className="text-xl font-bold text-gray-900 mb-2">
+            View Wellness Records
+          </h2>
           <p className="text-sm text-gray-600">
-            See your past check-ins and trends.
+            Review your previous check-ins and understand your patterns.
           </p>
         </Link>
-      </div>
-
-      <div className="bg-white p-6 rounded-2xl shadow">
-        <h2 className="text-lg font-semibold mb-2">AI Insight</h2>
-        <p className="text-gray-700 text-sm">
-          {insight || "Generating insight..."}
-        </p>
-      </div>
-
-      <div className="bg-white p-6 rounded-2xl shadow">
-        <h2 className="text-lg font-semibold mb-4">
-          Burnout Trend Last 7 Days
-        </h2>
-
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={trendData}>
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="burnout_score"
-                stroke="#000"
-                strokeWidth={2}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
       </div>
     </div>
   );

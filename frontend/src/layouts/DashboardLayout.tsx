@@ -1,71 +1,94 @@
-import { Link, useNavigate } from "react-router-dom";
-import { LayoutDashboard, ClipboardCheck, History, LogOut } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 type DashboardLayoutProps = {
   children: React.ReactNode;
 };
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+  const location = useLocation();
   const navigate = useNavigate();
 
+  const username = localStorage.getItem("username") || "User";
+
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    localStorage.clear();
     navigate("/login");
   };
 
+  const navItem = (path: string, label: string) => {
+    const isActive = location.pathname === path;
+
+    return (
+      <Link
+        to={path}
+        className={`block px-4 py-2 rounded-xl text-sm font-medium transition
+          ${
+            isActive
+              ? "bg-purple-100 text-purple-700"
+              : "text-gray-600 hover:bg-gray-100"
+          }`}
+      >
+        {label}
+      </Link>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gray-100 flex">
-      <aside className="w-64 bg-white shadow-md hidden md:flex flex-col">
-        <div className="p-6 border-b">
-          <h1 className="text-2xl font-bold">Pause</h1>
-          <p className="text-sm text-gray-500">Burnout Intelligence</p>
-        </div>
+    <div className="min-h-screen flex bg-gray-50">
 
-        <nav className="flex-1 p-4 space-y-2">
-          <Link
-            to="/dashboard"
-            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100"
-          >
-            <LayoutDashboard size={18} />
-            Dashboard
-          </Link>
+      {/* SIDEBAR */}
+      <div className="w-64 bg-white border-r border-gray-200 flex flex-col p-6">
 
-          <Link
-            to="/check-in"
-            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100"
-          >
-            <ClipboardCheck size={18} />
-            Daily Check-in
-          </Link>
+        {/* Logo */}
+        <h1 className="text-xl font-semibold text-slate-800 mb-8">
+          Pause
+        </h1>
 
-          <Link
-            to="/check-in/history"
-            className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-gray-100"
-          >
-            <History size={18} />
-            Check-in History
-          </Link>
+        {/* Navigation */}
+        <nav className="space-y-2">
+          {navItem("/dashboard", "Dashboard")}
+          {navItem("/check-in", "Daily Check-in")}
+          {navItem("/check-in/history", "History")}
         </nav>
 
-        <div className="p-4 border-t">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-red-600 hover:bg-red-50"
-          >
-            <LogOut size={18} />
-            Logout
-          </button>
+      </div>
+
+      {/* MAIN CONTENT */}
+      <div className="flex-1 flex flex-col">
+
+        {/* TOP BAR */}
+        <div className="flex justify-between items-center px-8 py-4 bg-white border-b border-gray-200">
+
+          <h2 className="text-lg font-semibold text-gray-800">
+            {location.pathname === "/dashboard"
+              ? "Dashboard"
+              : location.pathname === "/check-in"
+              ? "Daily Check-in"
+              : "History"}
+          </h2>
+
+          <div className="flex items-center gap-4">
+            <span className="text-sm text-gray-600">
+              {username}
+            </span>
+
+            <button
+              onClick={handleLogout}
+              className="text-sm text-red-500 hover:underline"
+            >
+              Logout
+            </button>
+          </div>
+
         </div>
-      </aside>
 
-      <main className="flex-1">
-        <header className="bg-white shadow-sm px-6 py-4">
-          <h2 className="text-lg font-semibold">Pause Dashboard</h2>
-        </header>
+        {/* PAGE CONTENT */}
+        <div className="p-8">
+          {children}
+        </div>
 
-        <section className="p-6">{children}</section>
-      </main>
+      </div>
+
     </div>
   );
 };
