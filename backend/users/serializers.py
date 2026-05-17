@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, UserProfile
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -26,3 +26,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+    
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = "__all__"
+        read_only_fields = ["user"]
