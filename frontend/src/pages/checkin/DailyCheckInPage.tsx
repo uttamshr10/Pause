@@ -11,6 +11,8 @@ const DailyCheckInPage = () => {
     sleep_hours: 7,
     workload_level: 5,
     energy_level: 5,
+    focus_level: 5,
+    recovery_time: 1,
     work_satisfaction: 5,
     notes: "",
   });
@@ -181,6 +183,15 @@ const DailyCheckInPage = () => {
               highLabel="Satisfied"
             />
 
+            <RangeInput
+              label="Focus Level"
+              name="focus_level"
+              value={form.focus_level}
+              helper="How focused and mentally clear you feel today."
+              lowLabel="Distracted"
+              highLabel="Focused"
+            />
+
             <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
               <label className="text-sm font-semibold text-gray-900">
                 Sleep Hours
@@ -205,9 +216,33 @@ const DailyCheckInPage = () => {
                 Recommended range: 7 to 8 hours
               </p>
             </div>
+            <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
+            <label className="text-sm font-semibold text-gray-900">
+              Recovery Time
+            </label>
+
+            <p className="text-xs text-gray-500 mt-1 mb-3">
+              Total rest, pause, or break time during the day.
+            </p>
+
+            <input
+              type="number"
+              name="recovery_time"
+              value={form.recovery_time}
+              onChange={handleChange}
+              min="0"
+              max="12"
+              step="0.5"
+              className="w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition bg-white"
+            />
+
+            <p className="text-xs text-gray-400 mt-2">
+              Example: 0.5 = 30 minutes, 1 = 1 hour
+            </p>
+          </div>
           </div>
         </div>
-
+        
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-2">
             Reflection Note

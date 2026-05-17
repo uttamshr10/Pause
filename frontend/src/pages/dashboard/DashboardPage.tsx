@@ -23,8 +23,8 @@ const DashboardPage = () => {
         const trend = await getWeeklyTrend();
         setTrendData(trend);
 
-        const insightData = await getInsight();
-        setInsight(insightData.insight);
+        // const insightData = await getInsight();
+        // setInsight(insightData.insight);
       } catch (err) {
         console.log(err);
       }

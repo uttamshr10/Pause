@@ -6,6 +6,8 @@ export const submitDailyCheckIn = async (data: {
   sleep_hours: number;
   workload_level: number;
   energy_level: number;
+  focus_level: number;
+  recovery_time: number;
   work_satisfaction: number;
   notes?: string;
 }) => {

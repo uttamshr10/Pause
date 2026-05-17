@@ -13,12 +13,14 @@ class DailyCheckInSerializer(serializers.ModelSerializer):
             'sleep_hours',
             'workload_level',
             'energy_level',
+            'focus_level',
+            'recovery_time',
             'work_satisfaction',
             'notes',
             'checkin_date',
+            'created_at',
             'burnout_score',
             'risk_level',
-            'created_at',
         ]
 
         read_only_fields = [

@@ -7,6 +7,8 @@ type CheckIn = {
   stress_level: number;
   sleep_hours: number;
   workload_level: number;
+  focus_level: number;
+  recovery_time: number;
   energy_level: number;
   work_satisfaction: number;
   burnout_score: number;
@@ -113,6 +115,8 @@ const CheckInHistoryPage = () => {
                   <th className="text-left p-4 font-medium">Workload</th>
                   <th className="text-left p-4 font-medium">Energy</th>
                   <th className="text-left p-4 font-medium">Satisfaction</th>
+                  <th className="text-left p-4 font-medium">Focus</th>
+                  <th className="text-left p-4 font-medium">Recovery</th>
                   <th className="text-left p-4 font-medium">Notes</th>
                 </tr>
               </thead>
@@ -156,6 +160,13 @@ const CheckInHistoryPage = () => {
                     </td>
                     <td className="p-4 text-gray-600">
                       {item.work_satisfaction}/10
+                    </td>
+                    <td className="p-4 text-gray-600">
+                      {item.focus_level}/10
+                    </td>
+
+                    <td className="p-4 text-gray-600">
+                      {item.recovery_time} hrs
                     </td>
                     <td className="p-4 text-gray-500 max-w-xs truncate">
                       {item.notes || "-"}
