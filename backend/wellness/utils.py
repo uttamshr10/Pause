@@ -51,12 +51,54 @@ def calculate_burnout_score(data):
     return round(burnout * 100, 2)
 
 
-def classify_risk(score):
+def classify_risk(score, data=None):
+    base_risk = "low"
     if score <= 30:
-        return "low"
+        base_risk = "low"
     elif score <= 60:
-        return "moderate"
+        base_risk = "moderate"
     elif score <= 80:
-        return "high"
+        base_risk = "high"
     else:
+        base_risk = "critical"
+
+    if not data:
+        return base_risk
+
+    stress = float(data.get("stress_level", 5))
+    workload = float(data.get("workload_level", 5))
+    sleep = float(data.get("sleep_hours", 7))
+    energy = float(data.get("energy_level", 5))
+    focus = float(data.get("focus_level", 5))
+    recovery = float(data.get("recovery_time", 1))
+
+    warning_count = 0
+
+    if stress >= 8:
+        warning_count += 1
+
+    if workload >= 8:
+        warning_count += 1
+
+    if sleep < 6:
+        warning_count += 1
+
+    if energy <= 3:
+        warning_count += 1
+
+    if focus <= 3:
+        warning_count += 1
+
+    if recovery < 0.5:
+        warning_count += 1
+
+    if warning_count >= 4:
         return "critical"
+
+    if warning_count >= 3 and base_risk in ["low", "moderate"]:
+        return "high"
+
+    if warning_count >= 2 and base_risk == "low":
+        return "moderate"
+
+    return base_risk
