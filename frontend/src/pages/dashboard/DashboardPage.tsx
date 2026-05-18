@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getInsight } from "../../api/insightApi";
-import { getWeeklyTrend, getTrendAnalysis } from "../../api/analyticsApi";
+import { getWeeklyTrend, getTrendAnalysis, getWeeklyReport } from "../../api/analyticsApi";
 import {
   LineChart,
   Line,
@@ -17,7 +17,8 @@ const DashboardPage = () => {
   const [trendData, setTrendData] = useState<any[]>([]);
   const [insight, setInsight] = useState("");
   const [trendAnalysis, setTrendAnalysis] = useState<any>(null);
-
+  const [weeklyReport, setWeeklyReport] = useState<any>(null);
+  
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -27,6 +28,8 @@ const DashboardPage = () => {
         const analysis = await getTrendAnalysis();
         setTrendAnalysis(analysis);
 
+        const report =      await getWeeklyReport();
+        setWeeklyReport(report);
         // const insightData = await getInsight();
         // setInsight(insightData.insight);
       } catch (err) {
@@ -156,6 +159,56 @@ const DashboardPage = () => {
       ))}
     </div>
   )}
+</div>
+      <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+  <p className="text-sm text-purple-600 font-medium mb-2">
+    Weekly Report
+  </p>
+
+  <h2 className="text-xl font-bold text-gray-900 mb-4">
+    Last 7 Days Summary
+  </h2>
+
+  <div className="grid md:grid-cols-4 gap-4 mb-5">
+    <div className="bg-gray-50 rounded-2xl p-4">
+      <p className="text-xs text-gray-500">Avg Burnout</p>
+      <h3 className="text-xl font-bold text-gray-900">
+        {weeklyReport?.average_burnout ?? "--"}
+      </h3>
+    </div>
+
+    <div className="bg-gray-50 rounded-2xl p-4">
+      <p className="text-xs text-gray-500">Avg Stress</p>
+      <h3 className="text-xl font-bold text-gray-900">
+        {weeklyReport?.average_stress ?? "--"}
+      </h3>
+    </div>
+
+    <div className="bg-gray-50 rounded-2xl p-4">
+      <p className="text-xs text-gray-500">Avg Sleep</p>
+      <h3 className="text-xl font-bold text-gray-900">
+        {weeklyReport?.average_sleep ?? "--"}
+      </h3>
+    </div>
+
+    <div className="bg-gray-50 rounded-2xl p-4">
+      <p className="text-xs text-gray-500">Avg Energy</p>
+      <h3 className="text-xl font-bold text-gray-900">
+        {weeklyReport?.average_energy ?? "--"}
+      </h3>
+    </div>
+  </div>
+
+  <div className="space-y-2">
+    {weeklyReport?.summary?.map((item: string, index: number) => (
+      <div
+        key={index}
+        className="bg-purple-50 border border-purple-100 text-purple-700 text-sm p-3 rounded-xl"
+      >
+        {item}
+      </div>
+    ))}
+  </div>
 </div>
       </div>
 

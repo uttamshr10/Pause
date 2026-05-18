@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from .ai_utils import generate_insight
 from .trend_utils import analyze_trend
 from wellness.models import DailyCheckIn
-
+from .weekly_utils import generate_weekly_report
 
 class WeeklyTrendView(APIView):
     permission_classes = [IsAuthenticated]
@@ -57,3 +57,19 @@ class TrendAnalysisView(APIView):
         result = analyze_trend(checkins)
 
         return Response(result)
+    
+class WeeklyReportView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        checkins = DailyCheckIn.objects.filter(
+            user=user
+        ).order_by("-checkin_date")[:7]
+
+        checkins = list(checkins)
+
+        report = generate_weekly_report(checkins)
+
+        return Response(report)

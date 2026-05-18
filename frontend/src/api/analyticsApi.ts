@@ -9,3 +9,8 @@ export const getTrendAnalysis = async () => {
   const response = await apiClient.get("/analytics/trend-analysis/");
   return response.data;
 };
+
+export const getWeeklyReport = async () => {
+  const response = await apiClient.get("/analytics/weekly-report/");
+  return response.data;
+};
