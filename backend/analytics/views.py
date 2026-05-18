@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .ai_utils import generate_insight
-
+from .trend_utils import analyze_trend
 from wellness.models import DailyCheckIn
 
 
@@ -41,3 +41,19 @@ class InsightView(APIView):
         return Response({
             "insight": insight
         })
+
+class TrendAnalysisView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        checkins = DailyCheckIn.objects.filter(
+            user=user
+        ).order_by("-checkin_date")[:7]
+
+        checkins = list(checkins)[::-1]
+
+        result = analyze_trend(checkins)
+
+        return Response(result)

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getWeeklyTrend } from "../../api/analyticsApi";
 import { getInsight } from "../../api/insightApi";
+import { getWeeklyTrend, getTrendAnalysis } from "../../api/analyticsApi";
 import {
   LineChart,
   Line,
@@ -16,12 +16,16 @@ const DashboardPage = () => {
 
   const [trendData, setTrendData] = useState<any[]>([]);
   const [insight, setInsight] = useState("");
+  const [trendAnalysis, setTrendAnalysis] = useState<any>(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
         const trend = await getWeeklyTrend();
         setTrendData(trend);
+
+        const analysis = await getTrendAnalysis();
+        setTrendAnalysis(analysis);
 
         // const insightData = await getInsight();
         // setInsight(insightData.insight);
@@ -125,6 +129,34 @@ const DashboardPage = () => {
             {insight || "Generating your wellness insight..."}
           </p>
         </div>
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+  <p className="text-sm text-purple-600 font-medium mb-2">
+    Trend Analysis
+  </p>
+
+  <h2 className="text-xl font-bold text-gray-900 mb-3 capitalize">
+    {trendAnalysis?.trend_status || "No data"}
+  </h2>
+
+  <p className="text-sm text-gray-600 leading-6 mb-4">
+  {trendAnalysis?.trend_status === "no_data"
+    ? "Submit at least 2 check-ins to start trend analysis."
+    : trendAnalysis?.message}
+</p>
+
+  {trendAnalysis?.warnings?.length > 0 && (
+    <div className="space-y-2">
+      {trendAnalysis.warnings.map((warning: string, index: number) => (
+        <div
+          key={index}
+          className="bg-yellow-50 border border-yellow-100 text-yellow-700 text-sm p-3 rounded-xl"
+        >
+          {warning}
+        </div>
+      ))}
+    </div>
+  )}
+</div>
       </div>
 
       {/* ACTION CARDS */}
