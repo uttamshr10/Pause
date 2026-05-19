@@ -30,8 +30,8 @@ const DashboardPage = () => {
 
         const report =      await getWeeklyReport();
         setWeeklyReport(report);
-        // const insightData = await getInsight();
-        // setInsight(insightData.insight);
+        const insightData = await getInsight();
+        setInsight(insightData.insight);
       } catch (err) {
         console.log(err);
       }

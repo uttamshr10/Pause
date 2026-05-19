@@ -1,20 +1,33 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .ai_utils import generate_insight
-from .trend_utils import analyze_trend
-from wellness.models import DailyCheckIn
-from .weekly_utils import generate_weekly_report
 
+from django.conf import settings
+
+from .trend_utils import analyze_trend
+from .weekly_utils import generate_weekly_report
+from .models import Insight
+from wellness.models import DailyCheckIn
+
+
+# -------------------------------
+# WEEKLY TREND
+# -------------------------------
 class WeeklyTrendView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user = request.user
+
         from datetime import timedelta
         from django.utils.timezone import now
+
         last_7_days = now().date() - timedelta(days=7)
-        checkins = DailyCheckIn.objects.filter(user=user, checkin_date__gte=last_7_days).order_by("checkin_date")
+
+        checkins = DailyCheckIn.objects.filter(
+            user=user,
+            checkin_date__gte=last_7_days
+        ).order_by("checkin_date")
 
         data = [
             {
@@ -27,21 +40,96 @@ class WeeklyTrendView(APIView):
         ]
 
         return Response(data)
-    
+
+
+# -------------------------------
+# INSIGHT (TOGGLE ENABLED)
+# -------------------------------
 class InsightView(APIView):
     permission_classes = [IsAuthenticated]
-    
     def get(self, request):
         user = request.user
 
-        checkins = DailyCheckIn.objects.filter(user=user).order_by("-checkin_date")[:7]
+        # Check cached insight
+        existing = Insight.objects.filter(user=user).first()
+        if existing:
+            return Response({"insight": existing.content})
 
-        insight = generate_insight(checkins)
+        # Get latest 7 checkins
+        checkins = DailyCheckIn.objects.filter(
+            user=user
+        ).order_by("-checkin_date")[:7]
 
-        return Response({
-            "insight": insight
-        })
+        if not checkins:
+            return Response({"insight": "Not enough data to generate insight."})
+        checkins_list = list(checkins)[::-1]
+        trend_result = analyze_trend(checkins_list)
+        # Prepare summary
+        summary = f"""
+        Burnout scores: {[c.burnout_score for c in checkins]}
+        Stress: {[c.stress_level for c in checkins]}
+        Sleep: {[c.sleep_hours for c in checkins]}
+        Trend: {trend_result['trend_status']}
+        """
 
+        # 🔥 TOGGLE
+        use_ai = getattr(settings, "USE_AI_INSIGHT", False)
+
+        if use_ai and client:
+            try:
+                response = client.chat.completions.create(
+                    model="gpt-4.1-mini",
+                    messages=[
+                        {
+                            "role": "system",
+                            "content": "You are a wellness assistant. Give short, clear burnout insights."
+                        },
+                        {
+                            "role": "user",
+                            "content": f"Analyze this data and give a short insight:\n{summary}"
+                        }
+                    ],
+                    max_tokens=100
+                )
+
+                insight_text = response.choices[0].message.content.strip()
+
+            except Exception:
+                insight_text = "AI insight unavailable. Showing fallback insight."
+
+        else:
+            # ✅ STATIC FALLBACK (SMART)
+            insight_text = self.generate_static_insight(checkins, trend_result)
+
+        # Save insight
+        Insight.objects.create(user=user, content=insight_text)
+
+        return Response({"insight": insight_text})
+
+    # -------------------------------
+    # STATIC FALLBACK LOGIC
+    # -------------------------------
+    def generate_static_insight(self, checkins, trend_result):
+        trend = trend_result["trend_status"]
+
+        if trend == "worsening":
+            return "Your burnout trend is increasing. Consider reducing workload and improving recovery time."
+
+        if trend == "improving":
+            return "Your burnout trend is improving. Keep maintaining your current routine."
+
+        # stable fallback
+        avg_stress = sum(c.stress_level for c in checkins) / len(checkins)
+
+        if avg_stress >= 7:
+            return "Your stress levels are consistently high. Consider taking breaks."
+
+        return "Your wellness pattern looks stable. Keep maintaining your routine."
+
+
+# -------------------------------
+# TREND ANALYSIS
+# -------------------------------
 class TrendAnalysisView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -57,7 +145,11 @@ class TrendAnalysisView(APIView):
         result = analyze_trend(checkins)
 
         return Response(result)
-    
+
+
+# -------------------------------
+# WEEKLY REPORT
+# -------------------------------
 class WeeklyReportView(APIView):
     permission_classes = [IsAuthenticated]
 
