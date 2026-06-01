@@ -8,6 +8,7 @@ import CheckInHistoryPage from "./pages/checkin/CheckInHistoryPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import OnboardingPage from "./pages/onboarding/OnboardingPage";
+import ReportsPage from "./pages/reports/ReportsPage";
 
 function App() {
   return (
@@ -55,6 +56,16 @@ function App() {
           element={
             <ProtectedRoute>
               <OnboardingPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reports"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <ReportsPage />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
