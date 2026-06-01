@@ -14,14 +14,13 @@ const DailyCheckInPage = () => {
     sleep_hours: 7,
     workload_level: 5,
     energy_level: 5,
+    work_satisfaction: 5,
     focus_level: 5,
     recovery_time: 1,
-    work_satisfaction: 5,
     notes: "",
   });
 
   const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -29,11 +28,7 @@ const DailyCheckInPage = () => {
       try {
         const data = await getCheckInHistory();
         const today = new Date().toISOString().split("T")[0];
-
-        const exists = data.some(
-          (item: any) => item.checkin_date === today
-        );
-
+        const exists = data.some((item: any) => item.checkin_date === today);
         setAlreadySubmitted(exists);
       } catch (err) {
         console.log(err);
@@ -45,27 +40,17 @@ const DailyCheckInPage = () => {
     checkToday();
   }, []);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type } = e.target;
-
-    setForm({
-      ...form,
-      [name]: type === "number" || type === "range" ? Number(value) : value,
-    });
+  const updateField = (name: keyof typeof form, value: number | string) => {
+    setForm({ ...form, [name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setLoading(true);
-    setSuccess("");
     setError("");
 
     try {
       await submitDailyCheckIn(form);
-      setSuccess("Daily check-in submitted successfully.");
       setAlreadySubmitted(true);
 
       setTimeout(() => {
@@ -78,113 +63,306 @@ const DailyCheckInPage = () => {
     }
   };
 
-  const RangeInput = ({
-    label,
-    name,
-    value,
-    helper,
-    lowLabel,
-    highLabel,
-  }: any) => (
-    <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5">
-      <div className="flex justify-between items-start mb-3">
-        <div>
-          <label className="text-sm font-semibold text-gray-900">{label}</label>
-          <p className="text-xs text-gray-500 mt-1">{helper}</p>
-        </div>
+  const NumberScale = ({
+  title,
+  subtitle,
+  name,
+  value,
+  leftLabel,
+  rightLabel,
+}: {
+  title: string;
+  subtitle: string;
+  name: keyof typeof form;
+  value: number;
+  leftLabel: string;
+  rightLabel: string;
+}) => (
+  <div className="p-5">
+    <h3 className="text-sm font-bold text-slate-900">{title}</h3>
+    <p className="text-xs text-slate-500 mt-1 mb-4">{subtitle}</p>
 
-        <span className="bg-purple-100 text-purple-700 text-sm font-semibold px-3 py-1 rounded-full">
-          {value}/10
-        </span>
-      </div>
+    <div className="grid grid-cols-10 gap-1">
+      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+        <button
+          key={num}
+          type="button"
+          onClick={() => updateField(name, num)}
+          className={`h-9 rounded-lg text-xs font-semibold transition ${
+            value === num
+              ? "bg-purple-600 text-white shadow-sm"
+              : "bg-white text-slate-700 border border-gray-200 hover:bg-purple-50 hover:border-purple-300"
+          }`}
+        >
+          {num}
+        </button>
+      ))}
+    </div>
 
-      <input
-        type="range"
-        name={name}
-        min="1"
-        max="10"
-        value={value}
-        onChange={handleChange}
-        className="w-full accent-purple-600"
-      />
+    <div className="flex justify-between text-xs text-slate-500 mt-3">
+      <span>{leftLabel}</span>
+      <span>{rightLabel}</span>
+    </div>
+  </div>
+);
 
-      <div className="flex justify-between text-xs text-gray-400 mt-2">
-        <span>{lowLabel}</span>
-        <span>{highLabel}</span>
+  const MoodScale = () => {
+  const options = [
+    { label: "Very Bad", emoji: "😞", value: 2 },
+    { label: "Bad", emoji: "🙁", value: 4 },
+    { label: "Average", emoji: "😐", value: 6 },
+    { label: "Good", emoji: "🙂", value: 8 },
+    { label: "Excellent", emoji: "😊", value: 10 },
+  ];
+
+  return (
+    <div className="p-5">
+      <h3 className="text-sm font-bold text-slate-900">1. Mood</h3>
+      <p className="text-xs text-slate-500 mt-1 mb-4">
+        How would you describe your overall mood today?
+      </p>
+
+      <div className="grid grid-cols-5 gap-2">
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => updateField("mood_score", option.value)}
+            className={`rounded-xl border px-2 py-4 min-h-[88px] flex flex-col items-center justify-center transition ${
+            form.mood_score === option.value
+              ? "border-purple-600 bg-purple-50"
+              : "border-gray-200 bg-white hover:bg-purple-50"
+          }`}
+          >
+            <div className="text-xl mb-2">{option.emoji}</div>
+            <p className="text-[11px] font-semibold text-slate-700 leading-tight text-center">
+              {option.label}
+            </p>
+          </button>
+        ))}
       </div>
     </div>
   );
+};
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      {/* HEADER */}
-      <div className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-3xl p-8 text-white shadow-lg">
-        <p className="text-sm text-purple-100 mb-2">Daily Wellness Check-in</p>
-        <h1 className="text-3xl font-bold mb-3">
-          How are you feeling today?
+    <div className="max-w-7xl mx-auto">
+      <div className="mb-5">
+        <h1 className="text-3xl font-bold text-slate-900">
+          Daily Wellness Check-in
         </h1>
-        <p className="text-purple-100 max-w-2xl">
-          Your daily check-in helps Pause understand your wellness signals and detect burnout patterns over time.
+        <p className="text-sm text-slate-500 mt-2 max-w-2xl">
+          Take a few minutes to share how you're feeling. Your responses help
+          Pause understand your wellness and provide better insights.
         </p>
       </div>
 
-      {/* 🔥 LOADING STATE */}
       {checkingToday ? (
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 text-center">
-          <p className="text-gray-500 text-sm">
-            Checking today’s check-in...
-          </p>
+        <div className="bg-white rounded-3xl border border-gray-100 p-10 text-center shadow-sm">
+          <p className="text-sm text-slate-500">Checking today’s check-in...</p>
         </div>
       ) : alreadySubmitted ? (
-        /* ✅ COMPLETED STATE */
-        <div className="bg-white p-8 rounded-3xl border border-gray-100 text-center">
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
+        <div className="bg-white rounded-3xl border border-gray-100 p-10 text-center shadow-sm">
+          <h2 className="text-xl font-bold text-slate-900 mb-2">
             Check-in Completed ✅
           </h2>
-
-          <p className="text-gray-500 text-sm">
-            You have already submitted today's check-in. Come back tomorrow to log a new entry.
+          <p className="text-sm text-slate-500">
+            You have already submitted today's check-in. Come back tomorrow to
+            log a new entry.
           </p>
         </div>
       ) : (
-        /* ✅ FORM */
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {success && (
-            <div className="bg-green-50 border border-green-100 text-green-700 p-4 rounded-2xl text-sm">
-              {success}
-            </div>
-          )}
+        <form onSubmit={handleSubmit}>
+          <div className="grid lg:grid-cols-[1fr_280px] gap-6">
+            <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+              {error && (
+                <div className="m-5 rounded-2xl bg-red-50 border border-red-100 p-4 text-sm text-red-700">
+                  {error}
+                </div>
+              )}
 
-          {error && (
-            <div className="bg-red-50 border border-red-100 text-red-700 p-4 rounded-2xl text-sm">
-              {error}
-            </div>
-          )}
+              <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                <MoodScale/>
 
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
-                Wellness Signals
-              </h2>
+                <NumberScale
+                  title="2. Stress Level"
+                  subtitle="How stressed have you felt today?"
+                  name="stress_level"
+                  value={form.stress_level}
+                  leftLabel="No stress"
+                  rightLabel="Extreme stress"
+                />
+              </div>
+
+              <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100 border-t border-gray-100">
+                <NumberScale
+                  title="3. Energy Level"
+                  subtitle="How would you rate your energy today?"
+                  name="energy_level"
+                  value={form.energy_level}
+                  leftLabel="Low energy"
+                  rightLabel="High energy"
+                />
+
+                <div className="p-5">
+                  <h3 className="text-sm font-bold text-slate-900">
+                    4. Sleep Hours
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1 mb-4">
+                    How many hours did you sleep last night?
+                  </p>
+
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="number"
+                      value={form.sleep_hours}
+                      onChange={(e) =>
+                        updateField("sleep_hours", Number(e.target.value))
+                      }
+                      min={0}
+                      max={24}
+                      step={0.5}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                    <span className="text-sm text-slate-500">hrs</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100 border-t border-gray-100">
+                <NumberScale
+                  title="5. Focus Level"
+                  subtitle="How focused were you today?"
+                  name="focus_level"
+                  value={form.focus_level}
+                  leftLabel="Very low"
+                  rightLabel="Very high"
+                />
+
+                <NumberScale
+                  title="6. Workload"
+                  subtitle="How would you rate your workload today?"
+                  name="workload_level"
+                  value={form.workload_level}
+                  leftLabel="Very light"
+                  rightLabel="Very heavy"
+                />
+              </div>
+
+              <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-gray-100 border-t border-gray-100">
+                <NumberScale
+                  title="7. Work Satisfaction"
+                  subtitle="How satisfied did you feel with your work?"
+                  name="work_satisfaction"
+                  value={form.work_satisfaction}
+                  leftLabel="Low"
+                  rightLabel="Satisfied"
+                />
+
+                <div className="p-5">
+                  <h3 className="text-sm font-bold text-slate-900">
+                    8. Recovery Time
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1 mb-4">
+                    Total rest, pause, or break time today.
+                  </p>
+
+                  <div className="flex items-center gap-3">
+                    <input
+                      type="number"
+                      value={form.recovery_time}
+                      onChange={(e) =>
+                        updateField("recovery_time", Number(e.target.value))
+                      }
+                      min={0}
+                      max={12}
+                      step={0.5}
+                      className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                    <span className="text-sm text-slate-500">hrs</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-5 border-t border-gray-100">
+                <h3 className="text-sm font-bold text-slate-900">
+                  9. Additional Notes{" "}
+                  <span className="font-normal text-slate-400">(Optional)</span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-1 mb-4">
+                  Anything you'd like to share about your day?
+                </p>
+
+                <textarea
+                  value={form.notes}
+                  onChange={(e) => updateField("notes", e.target.value)}
+                  rows={4}
+                  maxLength={500}
+                  className="w-full rounded-xl border border-gray-200 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  placeholder="Write your thoughts here..."
+                />
+
+                <div className="text-right text-xs text-slate-400 mt-2">
+                  {form.notes.length} / 500
+                </div>
+              </div>
+
+              <div className="p-5 border-t border-gray-100 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="rounded-xl bg-purple-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 transition disabled:opacity-60"
+                >
+                  {loading ? "Submitting..." : "Submit Check-in"}
+                </button>
+              </div>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-5">
-              <RangeInput label="Mood Score" name="mood_score" value={form.mood_score} helper="" lowLabel="Low" highLabel="High" />
-              <RangeInput label="Stress Level" name="stress_level" value={form.stress_level} helper="" lowLabel="Calm" highLabel="Stress" />
-              <RangeInput label="Workload" name="workload_level" value={form.workload_level} helper="" lowLabel="Light" highLabel="Heavy" />
-              <RangeInput label="Energy" name="energy_level" value={form.energy_level} helper="" lowLabel="Low" highLabel="High" />
-              <RangeInput label="Focus" name="focus_level" value={form.focus_level} helper="" lowLabel="Low" highLabel="High" />
-            </div>
-          </div>
+            <aside className="space-y-5">
+              <div className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900 mb-5">
+                  Today's Check-in
+                </h3>
 
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-purple-600 text-white px-8 py-3 rounded-xl"
-            >
-              {loading ? "Submitting..." : "Submit Check-in"}
-            </button>
+                <div className="flex justify-center mb-5">
+                  <div className="h-28 w-28 rounded-full border-[10px] border-purple-600 flex items-center justify-center">
+                    <span className="text-2xl font-bold text-slate-900">
+                      Ready
+                    </span>
+                  </div>
+                </div>
+
+                <p className="text-center text-sm font-semibold text-slate-900">
+                Ready to Submit
+                </p>
+                <p className="text-center text-xs text-slate-500 mt-1">
+                  Adjust your responses and submit when ready.
+                </p>
+              </div>
+
+              <div className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
+                <h3 className="text-sm font-bold text-slate-900 mb-4">
+                  Why Check-in Daily?
+                </h3>
+
+                <div className="space-y-4 text-sm text-slate-600">
+                  <p>✓ Track your wellness trends</p>
+                  <p>✓ Detect burnout early</p>
+                  <p>✓ Get personalized insights</p>
+                  <p>✓ Improve your well-being</p>
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-purple-100 bg-purple-50 p-6">
+                <p className="text-sm font-bold text-purple-700 mb-3">
+                  Wellness Tip
+                </p>
+                <p className="text-sm text-slate-700 leading-6">
+                  You can’t pour from an empty cup. Small recovery breaks can
+                  protect your energy over time.
+                </p>
+              </div>
+            </aside>
           </div>
         </form>
       )}
