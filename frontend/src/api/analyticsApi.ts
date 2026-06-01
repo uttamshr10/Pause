@@ -14,3 +14,8 @@ export const getWeeklyReport = async () => {
   const response = await apiClient.get("/analytics/weekly-report/");
   return response.data;
 };
+
+export const getStreak = async () => {
+  const response = await apiClient.get("/analytics/streak/");
+  return response.data;
+}

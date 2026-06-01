@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getInsight } from "../../api/insightApi";
-import { getWeeklyTrend, getTrendAnalysis, getWeeklyReport } from "../../api/analyticsApi";
+import { getWeeklyTrend, getTrendAnalysis, getWeeklyReport, getStreak } from "../../api/analyticsApi";
 import {
   LineChart,
   Line,
@@ -18,7 +18,7 @@ const DashboardPage = () => {
   const [insight, setInsight] = useState("");
   const [trendAnalysis, setTrendAnalysis] = useState<any>(null);
   const [weeklyReport, setWeeklyReport] = useState<any>(null);
-  
+  const [streak, setStreak] = useState<any>(null);
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -32,6 +32,9 @@ const DashboardPage = () => {
         setWeeklyReport(report);
         const insightData = await getInsight();
         setInsight(insightData.insight);
+        const streakData = await getStreak();
+        setStreak(streakData);
+
       } catch (err) {
         console.log(err);
       }
@@ -59,6 +62,15 @@ const DashboardPage = () => {
       </div>
 
       {/* QUICK STATS */}
+      <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+        <p className="text-sm text-gray-500 mb-2">Current Streak</p>
+        <h2 className="text-3xl font-bold text-gray-900">
+          {streak?.current_streak ?? 0} days
+        </h2>
+        <p className="text-sm text-gray-500 mt-2">
+          Daily check-in consistency
+        </p>
+      </div>
       <div className="grid md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
           <p className="text-sm text-gray-500 mb-2">Latest Burnout Score</p>

@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-
+from datetime import timedelta
+from django.utils.timezone import now
 from django.conf import settings
 
 from .trend_utils import analyze_trend
@@ -165,3 +166,29 @@ class WeeklyReportView(APIView):
         report = generate_weekly_report(checkins)
 
         return Response(report)
+
+class StreakView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        checkins = DailyCheckIn.objects.filter(
+            user=user
+        ).order_by("-checkin_date")
+
+        streak = 0
+        today = now().date()
+
+        dates = [c.checkin_date for c in checkins]
+
+        current_day = today
+
+        while current_day in dates:
+            streak += 1
+            current_day = current_day - timedelta(days=1)
+
+        return Response({
+            "current_streak": streak,
+            "message": f"You have checked in for {streak} day(s) in a row."
+        })
