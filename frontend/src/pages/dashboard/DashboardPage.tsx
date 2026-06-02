@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getInsight } from "../../api/insightApi";
-import { getWeeklyTrend, getTrendAnalysis, getWeeklyReport, getStreak } from "../../api/analyticsApi";
+import { getWeeklyTrend, getTrendAnalysis, getWeeklyReport, getStreak, getBurnoutPrediction } from "../../api/analyticsApi";
 import {
   LineChart,
   Line,
@@ -9,6 +9,9 @@ import {
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
+  Area,
+  AreaChart,
 } from "recharts";
 
 const DashboardPage = () => {
@@ -19,29 +22,40 @@ const DashboardPage = () => {
   const [trendAnalysis, setTrendAnalysis] = useState<any>(null);
   const [weeklyReport, setWeeklyReport] = useState<any>(null);
   const [streak, setStreak] = useState<any>(null);
+  const [prediction, setPrediction] = useState<any>(null);
+
   useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const trend = await getWeeklyTrend();
-        setTrendData(trend);
+  const fetchDashboardData = async () => {
+    try {
+      const [
+        trend,
+        analysis,
+        report,
+        insightData,
+        streakData,
+        predictionData,
+      ] = await Promise.all([
+        getWeeklyTrend(),
+        getTrendAnalysis(),
+        getWeeklyReport(),
+        getInsight(),
+        getStreak(),
+        getBurnoutPrediction(),
+      ]);
 
-        const analysis = await getTrendAnalysis();
-        setTrendAnalysis(analysis);
+      setTrendData(trend);
+      setTrendAnalysis(analysis);
+      setWeeklyReport(report);
+      setInsight(insightData.insight);
+      setStreak(streakData);
+      setPrediction(predictionData);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-        const report =      await getWeeklyReport();
-        setWeeklyReport(report);
-        const insightData = await getInsight();
-        setInsight(insightData.insight);
-        const streakData = await getStreak();
-        setStreak(streakData);
-
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
+  fetchDashboardData();
+}, []);
 
   const latest = trendData[trendData.length - 1];
 
@@ -111,23 +125,45 @@ const DashboardPage = () => {
               </p>
             </div>
           </div>
+                <div className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={trendData}>
+            <defs>
+              <linearGradient id="burnoutGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#7C3AED" stopOpacity={0.28} />
+                <stop offset="95%" stopColor="#7C3AED" stopOpacity={0} />
+              </linearGradient>
+            </defs>
 
-          <div className="h-72">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={trendData}>
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Line
-                  type="monotone"
-                  dataKey="burnout_score"
-                  stroke="#7C3AED"
-                  strokeWidth={3}
-                  dot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+
+            <XAxis
+              dataKey="date"
+              tick={{ fontSize: 12, fill: "#64748B" }}
+              axisLine={false}
+              tickLine={false}
+            />
+
+            <YAxis
+              tick={{ fontSize: 12, fill: "#64748B" }}
+              axisLine={false}
+              tickLine={false}
+            />
+
+            <Tooltip />
+
+            <Area
+              type="monotone"
+              dataKey="burnout_score"
+              stroke="#7C3AED"
+              strokeWidth={3}
+              fill="url(#burnoutGradient)"
+              dot={{ r: 4, fill: "#7C3AED" }}
+              activeDot={{ r: 6 }}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
         </div>
 
         {/* AI INSIGHT */}
@@ -223,6 +259,35 @@ const DashboardPage = () => {
   </div>
 </div>
       </div>
+      <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+  <p className="text-sm text-purple-600 font-medium mb-2">
+    Burnout Prediction
+  </p>
+
+  <h2 className="text-xl font-bold text-gray-900 mb-3">
+    {prediction?.predicted_risk === "high"
+      ? "High Risk Forecast"
+      : prediction?.prediction_status === "stable_or_improving"
+      ? "Stable Pattern"
+      : "Prediction Pending"}
+  </h2>
+
+  <p className="text-sm text-gray-600 leading-6 mb-4">
+    {prediction?.message || "Submit more check-ins to generate prediction."}
+  </p>
+
+  {prediction?.days_to_high_risk !== null &&
+    prediction?.days_to_high_risk !== undefined && (
+      <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4">
+        <p className="text-xs text-purple-600 font-medium">
+          Estimated days to high risk
+        </p>
+        <h3 className="text-2xl font-bold text-purple-700 mt-1">
+          {prediction.days_to_high_risk} days
+        </h3>
+      </div>
+    )}
+</div>
 
       {/* ACTION CARDS */}
       <div className="grid md:grid-cols-2 gap-6">

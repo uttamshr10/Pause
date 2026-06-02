@@ -19,3 +19,8 @@ export const getStreak = async () => {
   const response = await apiClient.get("/analytics/streak/");
   return response.data;
 }
+
+export const getBurnoutPrediction = async () => {
+  const response = await apiClient.get("/analytics/burnout-prediction/");
+  return response.data;
+};

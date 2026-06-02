@@ -9,7 +9,7 @@ from .trend_utils import analyze_trend
 from .weekly_utils import generate_weekly_report
 from .models import Insight
 from wellness.models import DailyCheckIn
-
+from .prediction_utils import predict_burnout_risk
 
 # -------------------------------
 # WEEKLY TREND
@@ -192,3 +192,20 @@ class StreakView(APIView):
             "current_streak": streak,
             "message": f"You have checked in for {streak} day(s) in a row."
         })
+
+
+class BurnoutPredictionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        checkins = DailyCheckIn.objects.filter(
+            user=user
+        ).order_by("-checkin_date")[:7]
+
+        checkins = list(checkins)[::-1]
+
+        prediction = predict_burnout_risk(checkins)
+
+        return Response(prediction)
