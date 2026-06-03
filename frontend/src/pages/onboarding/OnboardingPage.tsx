@@ -11,6 +11,8 @@ const OnboardingPage = () => {
     stress_baseline: 5,
     user_type: "employee",
     wellness_goal: "",
+    sleep_goal: 8,
+    recovery_goal: 1.5,
   });
 
   const [loading, setLoading] = useState(false);
@@ -158,7 +160,37 @@ const OnboardingPage = () => {
               className="mt-2 w-full border border-gray-200 p-4 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500"
             />
           </div>
+            <div>
+  <label className="text-sm font-semibold text-gray-900">
+    Sleep Goal
+  </label>
+  <input
+    type="number"
+    name="sleep_goal"
+    value={form.sleep_goal}
+    onChange={handleChange}
+    min="0"
+    max="24"
+    step="0.5"
+    className="mt-2 w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+  />
+</div>
 
+<div>
+  <label className="text-sm font-semibold text-gray-900">
+    Recovery Goal
+  </label>
+  <input
+    type="number"
+    name="recovery_goal"
+    value={form.recovery_goal}
+    onChange={handleChange}
+    min="0"
+    max="12"
+    step="0.5"
+    className="mt-2 w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
+  />
+</div>  
           <button
             type="submit"
             disabled={loading}

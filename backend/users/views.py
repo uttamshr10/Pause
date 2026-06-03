@@ -17,13 +17,21 @@ class UserProfileView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        profile = request.user.profile
+        profile, created = UserProfile.objects.get_or_create(
+            user=request.user
+        )
         serializer = UserProfileSerializer(profile)
         return Response(serializer.data)
 
     def put(self, request):
-        profile = request.user.profile
-        serializer = UserProfileSerializer(profile, data=request.data, partial=True)
+        profile, created = UserProfile.objects.get_or_create(
+            user=request.user
+        )
+        serializer = UserProfileSerializer(
+            profile,
+            data=request.data,
+            partial=True
+        )
 
         if serializer.is_valid():
             serializer.save()

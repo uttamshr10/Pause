@@ -8,6 +8,7 @@ def generate_weekly_report(checkins):
     avg_stress = sum(c.stress_level for c in checkins) / total
     avg_sleep = sum(c.sleep_hours for c in checkins) / total
     avg_energy = sum(c.energy_level for c in checkins) / total
+    avg_recovery = sum(c.recovery_time for c in checkins) / total
 
     summary = []
 
@@ -28,5 +29,6 @@ def generate_weekly_report(checkins):
         "average_stress": round(avg_stress, 2),
         "average_sleep": round(avg_sleep, 2),
         "average_energy": round(avg_energy, 2),
+        "average_recovery": round(avg_recovery, 2),
         "summary": summary
     }
