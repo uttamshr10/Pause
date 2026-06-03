@@ -9,6 +9,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 import OnboardingPage from "./pages/onboarding/OnboardingPage";
 import ReportsPage from "./pages/reports/ReportsPage";
+import JournalPage from "./pages/journal/JournalPage";
 
 function App() {
   return (
@@ -69,6 +70,16 @@ function App() {
             </ProtectedRoute>
           }
         />
+      <Route
+        path="/journal"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <JournalPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+       }
+      />
       </Routes>
     </BrowserRouter>
   );
