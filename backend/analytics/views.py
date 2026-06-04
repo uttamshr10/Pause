@@ -10,6 +10,7 @@ from .weekly_utils import generate_weekly_report
 from .models import Insight
 from wellness.models import DailyCheckIn
 from .prediction_utils import predict_burnout_risk
+from .reflection_utils import generate_static_reflection
 
 # -------------------------------
 # WEEKLY TREND
@@ -209,3 +210,17 @@ class BurnoutPredictionView(APIView):
         prediction = predict_burnout_risk(checkins)
 
         return Response(prediction)
+    
+class ReflectionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        checkins = DailyCheckIn.objects.filter(
+            user=user
+        ).order_by("-checkin_date")[:14]
+
+        reflection = generate_static_reflection(checkins)
+
+        return Response(reflection)

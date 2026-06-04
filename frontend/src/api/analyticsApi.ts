@@ -24,3 +24,8 @@ export const getBurnoutPrediction = async () => {
   const response = await apiClient.get("/analytics/burnout-prediction/");
   return response.data;
 };
+
+export const getReflection = async () => {
+  const response = await apiClient.get("/analytics/reflection/");
+  return response.data;
+};

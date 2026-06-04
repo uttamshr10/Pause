@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { getCheckInHistory } from "../../api/wellnessApi";
-
+import { getReflection } from "../../api/analyticsApi";
 const JournalPage = () => {
   const [entries, setEntries] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-
+  const [reflection, setReflection] = useState<any>(null);
   useEffect(() => {
     const fetchEntries = async () => {
       try {
         const data = await getCheckInHistory();
-
+        const reflectionData = await getReflection();
+        setReflection(reflectionData);
         const filtered = data.filter(
           (item: any) =>
             item.notes &&
@@ -45,7 +46,37 @@ const JournalPage = () => {
           captured during your daily check-ins.
         </p>
       </div>
+      <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+  <p className="text-sm text-purple-600 font-medium mb-2">
+    Reflection Engine
+  </p>
 
+  <h2 className="text-xl font-bold text-slate-900 mb-3">
+    Journal Pattern Summary
+  </h2>
+
+  <p className="text-sm text-slate-600 leading-6 mb-4">
+    {reflection?.reflection || "Analyzing your journal patterns..."}
+  </p>
+
+  <div className="flex flex-wrap gap-2 mb-4">
+    {reflection?.themes?.map((theme: string, index: number) => (
+      <span
+        key={index}
+        className="bg-purple-50 text-purple-700 border border-purple-100 px-3 py-1 rounded-full text-xs font-medium"
+      >
+        {theme}
+      </span>
+    ))}
+  </div>
+
+  <div className="bg-gray-50 rounded-2xl p-4">
+    <p className="text-xs text-slate-500 mb-1">Suggested focus</p>
+    <p className="text-sm font-medium text-slate-800">
+      {reflection?.focus_area || "Add journal notes to generate focus area."}
+    </p>
+  </div>
+</div>
       <div className="bg-white rounded-3xl border border-gray-100 p-5">
         <input
           type="text"
