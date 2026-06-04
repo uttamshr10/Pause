@@ -109,15 +109,7 @@ const DashboardPage = () => {
 
         <InsightCard insight={insight} />
       </div>
-
-      <div className="grid lg:grid-cols-3 gap-6">
-        <TrendCard trendAnalysis={trendAnalysis} />
-        <PredictionCard prediction={prediction} />
-        <GoalCard weeklyReport={weeklyReport} profile={profile} />
-      </div>
-
-      <WeeklyReportCard weeklyReport={weeklyReport} />
-
+      <GoalCard weeklyReport={weeklyReport} profile={profile} />
       <div className="grid md:grid-cols-2 gap-6">
         <ActionCard to="/check-in" title="Submit Today’s Check-in" subtitle="Record mood, sleep, workload, stress, focus, and recovery." />
         <ActionCard to="/reports" title="View Weekly Report" subtitle="Review your weekly wellness summary and averages." />
