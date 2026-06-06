@@ -14,6 +14,20 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     localStorage.clear();
     navigate("/login");
   };
+  const pageTitle =
+  location.pathname === "/dashboard"
+    ? "Dashboard"
+    : location.pathname === "/check-in"
+    ? "Daily Check-in"
+    : location.pathname === "/check-in/history"
+    ? "History"
+    : location.pathname === "/reports"
+    ? "Reports"
+    : location.pathname === "/journal"
+    ? "Journal"
+    : location.pathname === "/settings/goals"
+    ? "Goal Settings"
+    : "Pause";
 
   const navItem = (path: string, label: string) => {
     const isActive = location.pathname === path;
@@ -62,11 +76,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <div className="flex justify-between items-center px-8 py-4 bg-white border-b border-gray-200">
 
           <h2 className="text-lg font-semibold text-gray-800">
-            {location.pathname === "/dashboard"
-              ? "Dashboard"
-              : location.pathname === "/check-in"
-              ? "Daily Check-in"
-              : "History"}
+            {pageTitle}
           </h2>
 
           <div className="flex items-center gap-4">

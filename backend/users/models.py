@@ -58,7 +58,7 @@ class UserProfile(models.Model):
     )
 
     wellness_goal = models.TextField(blank=True, null=True)
-    sleep_goal = models.FloatField(default=8)
+    sleep_goal = models.FloatField(default=7)
     recovery_goal = models.FloatField(default=1.5)
 
     created_at = models.DateTimeField(auto_now_add=True)

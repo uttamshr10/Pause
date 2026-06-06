@@ -10,6 +10,7 @@ import DashboardLayout from "./layouts/DashboardLayout";
 import OnboardingPage from "./pages/onboarding/OnboardingPage";
 import ReportsPage from "./pages/reports/ReportsPage";
 import JournalPage from "./pages/journal/JournalPage";
+import GoalSettingsPage from "./pages/settings/GoalSettingsPage";
 
 function App() {
   return (
@@ -79,6 +80,16 @@ function App() {
             </DashboardLayout>
           </ProtectedRoute>
        }
+      />
+      <Route
+        path="/settings/goals"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <GoalSettingsPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
       />
       </Routes>
     </BrowserRouter>
