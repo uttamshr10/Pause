@@ -319,49 +319,18 @@ const DailyCheckInPage = () => {
             </div>
 
             <aside className="space-y-5">
-              <div className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-900 mb-5">
-                  Today's Check-in
-                </h3>
+             <div className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
+            <h3 className="text-sm font-bold text-slate-900 mb-4">
+              Your Check-in Powers
+            </h3>
 
-                <div className="flex justify-center mb-5">
-                  <div className="h-28 w-28 rounded-full border-[10px] border-purple-600 flex items-center justify-center">
-                    <span className="text-2xl font-bold text-slate-900">
-                      Ready
-                    </span>
-                  </div>
-                </div>
-
-                <p className="text-center text-sm font-semibold text-slate-900">
-                Ready to Submit
-                </p>
-                <p className="text-center text-xs text-slate-500 mt-1">
-                  Adjust your responses and submit when ready.
-                </p>
-              </div>
-
-              <div className="bg-white rounded-3xl border border-gray-200 p-6 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-900 mb-4">
-                  Why Check-in Daily?
-                </h3>
-
-                <div className="space-y-4 text-sm text-slate-600">
-                  <p>✓ Track your wellness trends</p>
-                  <p>✓ Detect burnout early</p>
-                  <p>✓ Get personalized insights</p>
-                  <p>✓ Improve your well-being</p>
-                </div>
-              </div>
-
-              <div className="rounded-3xl border border-purple-100 bg-purple-50 p-6">
-                <p className="text-sm font-bold text-purple-700 mb-3">
-                  Wellness Tip
-                </p>
-                <p className="text-sm text-slate-700 leading-6">
-                  You can’t pour from an empty cup. Small recovery breaks can
-                  protect your energy over time.
-                </p>
-              </div>
+            <div className="space-y-4 text-sm text-slate-600">
+              <p>📈 Burnout Trend Tracking</p>
+              <p>📝 Weekly Wellness Reports</p>
+              <p>🎯 Goal Progress Monitoring</p>
+              <p>📔 Personal Wellness Journal</p>
+            </div>
+          </div>
             </aside>
           </div>
         </form>
