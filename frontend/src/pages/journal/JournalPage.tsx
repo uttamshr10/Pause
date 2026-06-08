@@ -1,25 +1,25 @@
 import { useEffect, useState } from "react";
 import { getCheckInHistory } from "../../api/wellnessApi";
-import { getReflection } from "../../api/analyticsApi";
+
 const JournalPage = () => {
   const [entries, setEntries] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [reflection, setReflection] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchEntries = async () => {
       try {
         const data = await getCheckInHistory();
-        const reflectionData = await getReflection();
-        setReflection(reflectionData);
-        const filtered = data.filter(
-          (item: any) =>
-            item.notes &&
-            item.notes.trim() !== ""
+
+        const journalEntries = data.filter(
+          (item: any) => item.notes && item.notes.trim() !== ""
         );
 
-        setEntries(filtered);
+        setEntries(journalEntries);
       } catch (err) {
         console.log(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -30,103 +30,86 @@ const JournalPage = () => {
     entry.notes.toLowerCase().includes(search.toLowerCase())
   );
 
+  if (loading) {
+    return (
+      <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
+        <p className="text-sm text-slate-500">Loading journal entries...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
-      <div className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-3xl p-8 text-white">
-        <p className="text-sm text-purple-100 mb-2">
-          Wellness Journal
-        </p>
+      <div className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-3xl p-8 text-white shadow-lg">
+        <p className="text-sm text-purple-100 mb-2">Wellness Journal</p>
 
         <h1 className="text-3xl font-bold mb-3">
-          Your personal reflections
+          Your reflection timeline
         </h1>
 
-        <p className="text-purple-100">
-          Review thoughts, feelings, and wellness notes
-          captured during your daily check-ins.
+        <p className="text-purple-100 max-w-2xl">
+          Review notes you wrote during daily check-ins and look back on how
+          your thoughts, workload, and mood changed over time.
         </p>
       </div>
-      <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
-  <p className="text-sm text-purple-600 font-medium mb-2">
-    Reflection Engine
-  </p>
 
-  <h2 className="text-xl font-bold text-slate-900 mb-3">
-    Journal Pattern Summary
-  </h2>
-
-  <p className="text-sm text-slate-600 leading-6 mb-4">
-    {reflection?.reflection || "Analyzing your journal patterns..."}
-  </p>
-
-  <div className="flex flex-wrap gap-2 mb-4">
-    {reflection?.themes?.map((theme: string, index: number) => (
-      <span
-        key={index}
-        className="bg-purple-50 text-purple-700 border border-purple-100 px-3 py-1 rounded-full text-xs font-medium"
-      >
-        {theme}
-      </span>
-    ))}
-  </div>
-
-  <div className="bg-gray-50 rounded-2xl p-4">
-    <p className="text-xs text-slate-500 mb-1">Suggested focus</p>
-    <p className="text-sm font-medium text-slate-800">
-      {reflection?.focus_area || "Add journal notes to generate focus area."}
-    </p>
-  </div>
-</div>
-      <div className="bg-white rounded-3xl border border-gray-100 p-5">
+      <div className="bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
         <input
           type="text"
-          placeholder="Search journal entries..."
+          placeholder="Search your journal notes..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full border border-gray-200 rounded-xl p-3"
+          className="w-full border border-gray-200 rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
         />
       </div>
 
-      <div className="space-y-5">
-        {filteredEntries.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-gray-100 p-8 text-center">
-            <h2 className="font-bold text-gray-900 mb-2">
-              No journal entries found
-            </h2>
+      {filteredEntries.length === 0 ? (
+        <div className="bg-white rounded-3xl border border-gray-100 p-10 text-center shadow-sm">
+          <h2 className="text-xl font-bold text-slate-900 mb-2">
+            No journal entries found
+          </h2>
 
-            <p className="text-gray-500 text-sm">
-              Add notes during your daily check-ins to build your journal.
-            </p>
-          </div>
-        ) : (
-          filteredEntries.map((entry) => (
+          <p className="text-sm text-slate-500">
+            Add notes during your daily check-ins to build your wellness
+            journal.
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-5">
+          {filteredEntries.map((entry) => (
             <div
               key={entry.id}
               className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm"
             >
-              <div className="flex justify-between items-center mb-4">
+              <div className="flex flex-wrap justify-between gap-4 mb-4">
                 <div>
-                  <p className="font-semibold text-gray-900">
+                  <p className="font-semibold text-slate-900">
                     {entry.checkin_date}
                   </p>
 
-                  <p className="text-sm text-gray-500">
-                    Burnout Score: {entry.burnout_score}
+                  <p className="text-sm text-slate-500 mt-1">
+                    Burnout Score: {entry.burnout_score}/100
                   </p>
                 </div>
 
-                <span className="bg-purple-50 text-purple-700 text-xs px-3 py-1 rounded-full">
-                  Mood {entry.mood_score}/10
-                </span>
+                <div className="flex gap-2">
+                  <span className="bg-purple-50 text-purple-700 border border-purple-100 text-xs px-3 py-1 rounded-full">
+                    Mood {entry.mood_score}/10
+                  </span>
+
+                  <span className="bg-gray-50 text-slate-600 border border-gray-100 text-xs px-3 py-1 rounded-full">
+                    Stress {entry.stress_level}/10
+                  </span>
+                </div>
               </div>
 
-              <p className="text-gray-700 leading-7">
+              <p className="text-slate-700 leading-7 text-sm">
                 {entry.notes}
               </p>
             </div>
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
