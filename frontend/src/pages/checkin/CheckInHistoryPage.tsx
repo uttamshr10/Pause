@@ -54,6 +54,20 @@ const CheckInHistoryPage = () => {
     return "bg-green-50 text-green-600 border-green-100";
   };
 
+  const totalCheckIns = checkIns.length;
+
+  const averageBurnout =
+    checkIns.length > 0
+      ? (
+          checkIns.reduce((sum, item) => sum + item.burnout_score, 0) /
+          checkIns.length
+        ).toFixed(1)
+      : "--";
+
+    const latestCheckIn = checkIns[0];
+
+    const latestRisk = latestCheckIn?.risk_level || "--";
+
   if (loading) {
     return (
       <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
@@ -80,7 +94,37 @@ const CheckInHistoryPage = () => {
           {error}
         </div>
       )}
+      {checkIns.length > 0 && (
+  <div className="grid md:grid-cols-4 gap-5">
+    <div className="bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
+      <p className="text-sm text-gray-500 mb-2">Total Check-ins</p>
+      <h2 className="text-3xl font-bold text-gray-900">
+        {totalCheckIns}
+      </h2>
+    </div>
 
+    <div className="bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
+      <p className="text-sm text-gray-500 mb-2">Average Burnout</p>
+      <h2 className="text-3xl font-bold text-gray-900">
+        {averageBurnout}
+      </h2>
+    </div>
+
+    <div className="bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
+      <p className="text-sm text-gray-500 mb-2">Latest Risk</p>
+      <h2 className="text-3xl font-bold text-gray-900 capitalize">
+        {latestRisk}
+      </h2>
+    </div>
+
+    <div className="bg-white rounded-3xl border border-gray-100 p-5 shadow-sm">
+      <p className="text-sm text-gray-500 mb-2">Latest Sleep</p>
+      <h2 className="text-3xl font-bold text-gray-900">
+        {latestCheckIn?.sleep_hours ?? "--"} hrs
+      </h2>
+    </div>
+  </div>
+)}
       {checkIns.length === 0 ? (
         <div className="bg-white rounded-3xl border border-gray-100 p-10 shadow-sm text-center">
           <h2 className="text-xl font-bold text-gray-900 mb-2">
@@ -112,12 +156,6 @@ const CheckInHistoryPage = () => {
                   <th className="text-left p-4 font-medium">Mood</th>
                   <th className="text-left p-4 font-medium">Stress</th>
                   <th className="text-left p-4 font-medium">Sleep</th>
-                  <th className="text-left p-4 font-medium">Workload</th>
-                  <th className="text-left p-4 font-medium">Energy</th>
-                  <th className="text-left p-4 font-medium">Satisfaction</th>
-                  <th className="text-left p-4 font-medium">Focus</th>
-                  <th className="text-left p-4 font-medium">Recovery</th>
-                  <th className="text-left p-4 font-medium">Notes</th>
                 </tr>
               </thead>
 
@@ -151,25 +189,6 @@ const CheckInHistoryPage = () => {
                     </td>
                     <td className="p-4 text-gray-600">
                       {item.sleep_hours} hrs
-                    </td>
-                    <td className="p-4 text-gray-600">
-                      {item.workload_level}/10
-                    </td>
-                    <td className="p-4 text-gray-600">
-                      {item.energy_level}/10
-                    </td>
-                    <td className="p-4 text-gray-600">
-                      {item.work_satisfaction}/10
-                    </td>
-                    <td className="p-4 text-gray-600">
-                      {item.focus_level}/10
-                    </td>
-
-                    <td className="p-4 text-gray-600">
-                      {item.recovery_time} hrs
-                    </td>
-                    <td className="p-4 text-gray-500 max-w-xs truncate">
-                      {item.notes || "-"}
                     </td>
                   </tr>
                 ))}
