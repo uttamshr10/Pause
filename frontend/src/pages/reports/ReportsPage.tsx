@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { getWeeklyReport } from "../../api/analyticsApi";
+import { getWeeklyReport, getTrendAnalysis,getBurnoutPrediction } from "../../api/analyticsApi";
+import { getUserProfile } from "../../api/userApi";
 
 type WeeklyReport = {
   average_burnout: number;
@@ -11,13 +12,26 @@ type WeeklyReport = {
 
 const ReportsPage = () => {
   const [report, setReport] = useState<WeeklyReport | null>(null);
+  const [trendAnalysis, setTrendAnalysis] = useState<any>(null);
+  const [prediction, setPrediction] = useState<any>(null);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const data = await getWeeklyReport();
-        setReport(data);
+        const [reportData, trendData, predictionData, profileData] =
+        await Promise.all([
+          getWeeklyReport(),
+          getTrendAnalysis(),
+          getBurnoutPrediction(),
+          getUserProfile(),
+        ]);
+
+      setReport(reportData);
+      setTrendAnalysis(trendData);
+      setPrediction(predictionData);
+      setProfile(profileData);
       } catch (err) {
         console.log(err);
       } finally {
@@ -71,6 +85,28 @@ const ReportsPage = () => {
       suffix: "/10",
     },
   ];
+  const riskLevel =
+  report.average_burnout >= 61
+    ? "High"
+    : report.average_burnout >= 31
+    ? "Moderate"
+    : "Low";
+
+const strongestArea =
+  report.average_sleep >= 7
+    ? "Sleep"
+    : report.average_energy >= 6
+    ? "Energy"
+    : "Recovery";
+
+const focusArea =
+  report.average_stress >= 7
+    ? "Stress"
+    : report.average_sleep < 7
+    ? "Sleep"
+    : (report as any).average_recovery < 1
+    ? "Recovery"
+    : "Maintain Routine";
 
   return (
     <div className="space-y-8">
@@ -125,19 +161,72 @@ const ReportsPage = () => {
             ))}
           </div>
         </div>
-
         <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
-          <h2 className="text-xl font-bold text-slate-900 mb-2">
-            What this means
-          </h2>
+  <p className="text-sm text-purple-600 font-medium mb-2">
+    Report Snapshot
+  </p>
 
-          <p className="text-sm text-slate-600 leading-6">
-            This report is not a medical diagnosis. It helps you understand
-            behavioral wellness patterns such as burnout score, stress, sleep,
-            and energy changes over the last 7 days.
-          </p>
-        </div>
+  <h2 className="text-xl font-bold text-slate-900 mb-5">
+    Weekly Overview
+  </h2>
+
+  <div className="space-y-4">
+    <div className="bg-gray-50 rounded-2xl p-4">
+      <p className="text-xs text-slate-500 mb-1">Risk Level</p>
+      <p className="text-lg font-bold text-slate-900">
+        {riskLevel}
+      </p>
+    </div>
+
+    <div className="bg-gray-50 rounded-2xl p-4">
+      <p className="text-xs text-slate-500 mb-1">Strongest Area</p>
+      <p className="text-lg font-bold text-slate-900">
+        {strongestArea}
+      </p>
+    </div>
+
+    <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4">
+      <p className="text-xs text-purple-600 mb-1">Focus Area</p>
+      <p className="text-lg font-bold text-purple-700">
+        {focusArea}
+      </p>
+    </div>
+  </div>
+</div>
       </div>
+      <div className="grid lg:grid-cols-3 gap-6">
+  <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+    <p className="text-sm text-purple-600 font-medium mb-2">
+      Trend Analysis
+    </p>
+
+    <h2 className="text-xl font-bold text-slate-900 mb-3 capitalize">
+      {trendAnalysis?.trend_status || "No data"}
+    </h2>
+
+    <p className="text-sm text-slate-600 leading-6">
+      {trendAnalysis?.message || "Submit more check-ins to generate trend analysis."}
+    </p>
+  </div>
+
+  <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+    <p className="text-sm text-purple-600 font-medium mb-2">
+      Burnout Prediction
+    </p>
+
+    <h2 className="text-xl font-bold text-slate-900 mb-3">
+      {prediction?.predicted_risk === "high"
+        ? "High Risk Forecast"
+        : prediction?.prediction_status === "stable_or_improving"
+        ? "Stable Pattern"
+        : "Prediction Pending"}
+    </h2>
+
+    <p className="text-sm text-slate-600 leading-6">
+      {prediction?.message || "Submit more check-ins to generate prediction."}
+    </p>
+  </div>
+</div>
     </div>
   );
 };
