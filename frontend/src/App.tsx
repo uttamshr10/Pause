@@ -11,6 +11,7 @@ import OnboardingPage from "./pages/onboarding/OnboardingPage";
 import ReportsPage from "./pages/reports/ReportsPage";
 import JournalPage from "./pages/journal/JournalPage";
 import GoalSettingsPage from "./pages/settings/GoalSettingsPage";
+import AchievementsPage from "./pages/achievements/AchievementsPage";
 
 function App() {
   return (
@@ -87,6 +88,16 @@ function App() {
           <ProtectedRoute>
             <DashboardLayout>
               <GoalSettingsPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/achievements"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <AchievementsPage />
             </DashboardLayout>
           </ProtectedRoute>
         }

@@ -29,3 +29,8 @@ export const getReflection = async () => {
   const response = await apiClient.get("/analytics/reflection/");
   return response.data;
 };
+
+export const getAchievements = async () => {
+  const response = await apiClient.get("/analytics/achievements/");
+  return response.data;
+};

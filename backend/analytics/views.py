@@ -11,6 +11,7 @@ from .models import Insight
 from wellness.models import DailyCheckIn
 from .prediction_utils import predict_burnout_risk
 from .reflection_utils import generate_static_reflection
+from .achievement_utils import generate_achievements
 
 # -------------------------------
 # WEEKLY TREND
@@ -224,3 +225,18 @@ class ReflectionView(APIView):
         reflection = generate_static_reflection(checkins)
 
         return Response(reflection)
+    
+class AchievementView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        checkins = DailyCheckIn.objects.filter(
+            user=request.user
+        ).order_by("-checkin_date")
+
+        achievements = generate_achievements(checkins)
+
+        return Response({
+            "total_unlocked": len(achievements),
+            "achievements": achievements
+        })
