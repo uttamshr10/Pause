@@ -1,46 +1,46 @@
 def generate_recommendations(data):
     recommendations = []
 
-    stress = float(data.get("stress_level", 5))
-    sleep = float(data.get("sleep_hours", 7))
-    workload = float(data.get("workload_level", 5))
-    energy = float(data.get("energy_level", 5))
-    focus = float(data.get("focus_level", 5))
-    recovery = float(data.get("recovery_time", 1))
+    sleep = float(data.get("sleep_hours", 0))
+    stress = int(data.get("stress_level", 0))
+    energy = int(data.get("energy_level", 0))
+    workload = int(data.get("workload_level", 0))
+    recovery = float(data.get("recovery_time", 0))
+    focus = int(data.get("focus_level", 0))
+
+    if sleep < 7:
+        recommendations.append(
+            "Aim for 7–8 hours of sleep to improve recovery and reduce burnout risk."
+        )
 
     if stress >= 7:
         recommendations.append(
-            "Consider taking short breaks or practicing relaxation techniques to reduce stress."
+            "Schedule short breaks during the day to manage stress levels."
         )
 
-    if sleep < 6:
+    if workload >= 7:
         recommendations.append(
-            "Your sleep duration is low. Aim for at least 7 hours of sleep."
+            "Consider prioritizing tasks and reducing unnecessary workload."
         )
 
-    if workload >= 8:
+    if recovery < 1:
         recommendations.append(
-            "Your workload seems high. Try prioritizing tasks or delegating if possible."
+            "Increase daily recovery time through walks, breaks, or relaxation."
         )
 
-    if energy <= 3:
+    if energy <= 4:
         recommendations.append(
-            "Low energy detected. Consider light physical activity or rest."
+            "Low energy was detected. Focus on sleep, hydration, and recovery."
         )
 
-    if focus <= 3:
+    if focus <= 4:
         recommendations.append(
-            "Your focus level is low. Try minimizing distractions or using focused work sessions."
-        )
-
-    if recovery < 0.5:
-        recommendations.append(
-            "You may need more recovery time. Take short breaks during work."
+            "Reduce distractions and schedule focused work sessions."
         )
 
     if not recommendations:
         recommendations.append(
-            "Your wellness looks balanced. Keep maintaining your routine."
+            "Your wellness indicators look healthy. Continue your current routine."
         )
 
     return recommendations

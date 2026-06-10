@@ -4,6 +4,7 @@ from analytics.recommendation_utils import generate_recommendations
 from rest_framework.response import Response
 from .models import DailyCheckIn
 from .serializers import DailyCheckInSerializer
+from analytics.models import Recommendation
 
 from .utils import calculate_burnout_score, classify_risk
 from django.utils.timezone import localdate
@@ -27,6 +28,11 @@ class DailyCheckInCreateView(generics.CreateAPIView):
         burnout_score = calculate_burnout_score(data)
         risk_level = classify_risk(burnout_score, data)
         recommendations = generate_recommendations(data)
+        for rec in recommendations:
+            Recommendation.objects.create(
+                user=request.user,
+                content=rec
+            )
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)

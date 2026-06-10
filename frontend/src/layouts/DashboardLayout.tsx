@@ -66,6 +66,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           {navItem("/reports", "Reports")}
           {navItem("/journal", "Journal")}
           {navItem("/achievements", "Achievements")}
+          {navItem("/recommendations", "Recommendations")}
         </nav>
 
       </div>

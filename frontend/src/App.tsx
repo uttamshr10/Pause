@@ -12,6 +12,7 @@ import ReportsPage from "./pages/reports/ReportsPage";
 import JournalPage from "./pages/journal/JournalPage";
 import GoalSettingsPage from "./pages/settings/GoalSettingsPage";
 import AchievementsPage from "./pages/achievements/AchievementsPage";
+import RecommendationsPage from "./pages/recommendations/RecommendationsPage";
 
 function App() {
   return (
@@ -98,6 +99,16 @@ function App() {
           <ProtectedRoute>
             <DashboardLayout>
               <AchievementsPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/recommendations"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <RecommendationsPage />
             </DashboardLayout>
           </ProtectedRoute>
         }

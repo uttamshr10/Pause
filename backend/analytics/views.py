@@ -7,7 +7,7 @@ from django.conf import settings
 
 from .trend_utils import analyze_trend
 from .weekly_utils import generate_weekly_report
-from .models import Insight
+from .models import Insight, Recommendation
 from wellness.models import DailyCheckIn
 from .prediction_utils import predict_burnout_risk
 from .reflection_utils import generate_static_reflection
@@ -240,3 +240,19 @@ class AchievementView(APIView):
             "total_unlocked": len(achievements),
             "achievements": achievements
         })
+    
+class RecommendationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        recommendations = Recommendation.objects.filter(
+            user=request.user
+        )[:10]
+
+        return Response([
+            {
+                "content": r.content,
+                "created_at": r.created_at
+            }
+            for r in recommendations
+        ])

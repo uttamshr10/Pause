@@ -34,3 +34,11 @@ export const getAchievements = async () => {
   const response = await apiClient.get("/analytics/achievements/");
   return response.data;
 };
+
+export const getRecommendations = async () => {
+  const response = await apiClient.get(
+    "/analytics/recommendations/"
+  );
+
+  return response.data;
+};
