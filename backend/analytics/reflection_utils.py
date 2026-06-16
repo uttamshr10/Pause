@@ -1,50 +1,84 @@
 def generate_static_reflection(checkins):
-    notes = [
-        c.notes.lower()
-        for c in checkins
-        if c.notes and c.notes.strip() != ""
-    ]
-
-    if not notes:
+    if not checkins:
         return {
-            "reflection": "No journal notes available yet.",
+            "summary": "Not enough data available.",
             "themes": [],
-            "focus_area": "Start adding short notes during check-ins."
+            "focus_area": ""
         }
 
-    text = " ".join(notes)
+    notes = []
+
+    for c in checkins:
+        if c.notes:
+            notes.append(c.notes.lower())
+
+    combined_notes = " ".join(notes)
 
     themes = []
 
-    if "tired" in text or "exhausted" in text or "low energy" in text:
-        themes.append("Low energy")
+    if any(word in combined_notes for word in [
+        "stress",
+        "pressure",
+        "overwhelmed"
+    ]):
+        themes.append("Stress")
 
-    if "stress" in text or "pressure" in text or "overload" in text:
-        themes.append("Stress and pressure")
+    if any(word in combined_notes for word in [
+        "sleep",
+        "tired",
+        "exhausted"
+    ]):
+        themes.append("Sleep")
 
-    if "sleep" in text or "slept" in text or "rest" in text:
-        themes.append("Sleep and recovery")
-
-    if "work" in text or "deadline" in text or "task" in text:
+    if any(word in combined_notes for word in [
+        "work",
+        "deadline",
+        "task"
+    ]):
         themes.append("Workload")
 
-    if "motivated" in text or "better" in text or "good" in text:
-        themes.append("Positive momentum")
+    avg_sleep = sum(c.sleep_hours for c in checkins) / len(checkins)
+    avg_stress = sum(c.stress_level for c in checkins) / len(checkins)
+    avg_energy = sum(c.energy_level for c in checkins) / len(checkins)
+    avg_recovery = sum(c.recovery_time for c in checkins) / len(checkins)
 
-    if not themes:
-        themes.append("General wellness reflection")
+    observations = []
 
-    if "Stress and pressure" in themes:
-        focus_area = "Reduce stress through breaks, workload planning, and recovery time."
-    elif "Sleep and recovery" in themes:
-        focus_area = "Improve sleep consistency and recovery habits."
-    elif "Low energy" in themes:
-        focus_area = "Monitor energy levels and prioritize rest."
+    if avg_sleep < 7:
+        observations.append(
+            "Sleep duration remained below the recommended range."
+        )
+
+    if avg_stress > 6:
+        observations.append(
+            "Stress levels were elevated throughout the period."
+        )
+
+    if avg_energy < 5:
+        observations.append(
+            "Energy levels frequently remained low."
+        )
+
+    summary = (
+        "Your recent journal entries and wellness signals reveal recurring patterns. "
+        + " ".join(observations)
+    )
+
+    if avg_recovery < 1:
+        focus_area = (
+            "Increase daily recovery time through breaks, walks, or relaxation."
+        )
+    elif avg_sleep < 7:
+        focus_area = (
+            "Prioritize sleep consistency to improve overall wellness."
+        )
     else:
-        focus_area = "Continue journaling to identify clearer patterns."
+        focus_area = (
+            "Continue maintaining your current wellness habits."
+        )
 
     return {
-        "reflection": "Your journal entries show patterns that can help explain your wellness changes.",
+        "summary": summary,
         "themes": themes,
         "focus_area": focus_area
     }

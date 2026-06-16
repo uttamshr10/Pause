@@ -13,6 +13,7 @@ import JournalPage from "./pages/journal/JournalPage";
 import GoalSettingsPage from "./pages/settings/GoalSettingsPage";
 import AchievementsPage from "./pages/achievements/AchievementsPage";
 import RecommendationsPage from "./pages/recommendations/RecommendationsPage";
+import ReflectionPage from "./pages/reflection/ReflectionPage";
 
 function App() {
   return (
@@ -113,6 +114,16 @@ function App() {
           </ProtectedRoute>
         }
       />
+      <Route
+  path="/reflection"
+  element={
+    <ProtectedRoute>
+      <DashboardLayout>
+        <ReflectionPage />
+      </DashboardLayout>
+    </ProtectedRoute>
+  }
+/>
       </Routes>
     </BrowserRouter>
   );

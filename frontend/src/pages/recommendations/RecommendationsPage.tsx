@@ -73,10 +73,6 @@ const RecommendationsPage = () => {
                 Recommendation
               </p>
 
-              <h2 className="text-lg font-bold text-slate-900 mb-3">
-                Action Suggestion
-              </h2>
-
               <p className="text-sm text-slate-600 leading-6">
                 {item.content}
               </p>

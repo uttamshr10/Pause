@@ -216,15 +216,17 @@ class ReflectionView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user = request.user
-
         checkins = DailyCheckIn.objects.filter(
-            user=user
-        ).order_by("-checkin_date")[:14]
+            user=request.user
+        )
 
         reflection = generate_static_reflection(checkins)
 
-        return Response(reflection)
+        return Response({
+            "summary": reflection["summary"],
+            "themes": reflection["themes"],
+            "focus_area": reflection["focus_area"],
+        })
     
 class AchievementView(APIView):
     permission_classes = [IsAuthenticated]
