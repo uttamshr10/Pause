@@ -42,3 +42,8 @@ export const getRecommendations = async () => {
 
   return response.data;
 };
+
+export const getActionPlans = async () => {
+  const response = await apiClient.get("/analytics/action-plans/");
+  return response.data;
+};

@@ -7,7 +7,7 @@ from django.conf import settings
 
 from .trend_utils import analyze_trend
 from .weekly_utils import generate_weekly_report
-from .models import Insight, Recommendation
+from .models import Insight, Recommendation, ActionPlan
 from wellness.models import DailyCheckIn
 from .prediction_utils import predict_burnout_risk
 from .reflection_utils import generate_static_reflection
@@ -257,4 +257,23 @@ class RecommendationView(APIView):
                 "created_at": r.created_at
             }
             for r in recommendations
+        ])
+    
+class ActionPlanView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        plans = ActionPlan.objects.filter(
+            user=request.user
+        )[:10]
+
+        return Response([
+            {
+                "id": plan.id,
+                "title": plan.title,
+                "description": plan.description,
+                "is_completed": plan.is_completed,
+                "created_at": plan.created_at,
+            }
+            for plan in plans
         ])

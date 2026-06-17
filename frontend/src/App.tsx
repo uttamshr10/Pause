@@ -14,6 +14,7 @@ import GoalSettingsPage from "./pages/settings/GoalSettingsPage";
 import AchievementsPage from "./pages/achievements/AchievementsPage";
 import RecommendationsPage from "./pages/recommendations/RecommendationsPage";
 import ReflectionPage from "./pages/reflection/ReflectionPage";
+import ActionPlanPage from "./pages/action-plan/ActionPlanPage";
 
 function App() {
   return (
@@ -115,15 +116,25 @@ function App() {
         }
       />
       <Route
-  path="/reflection"
-  element={
-    <ProtectedRoute>
-      <DashboardLayout>
-        <ReflectionPage />
-      </DashboardLayout>
-    </ProtectedRoute>
-  }
-/>
+        path="/reflection"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <ReflectionPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/action-plan"
+        element={
+          <ProtectedRoute>
+            <DashboardLayout>
+              <ActionPlanPage />
+            </DashboardLayout>
+          </ProtectedRoute>
+        }
+      />
       </Routes>
     </BrowserRouter>
   );
