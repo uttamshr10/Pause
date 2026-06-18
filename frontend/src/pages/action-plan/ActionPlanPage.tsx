@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getActionPlans } from "../../api/analyticsApi";
+import { getActionPlans, toggleActionPlan } from "../../api/analyticsApi";
 
 const ActionPlanPage = () => {
   const [plans, setPlans] = useState<any[]>([]);
@@ -20,6 +20,24 @@ const ActionPlanPage = () => {
     fetchPlans();
   }, []);
 
+  const handleToggle = async (planId: number) => {
+      try {
+      const result = await toggleActionPlan(planId);
+
+      setPlans((prev) =>
+        prev.map((plan) =>
+          plan.id === planId
+            ? {
+                ...plan,
+                is_completed: result.is_completed,
+              }
+            : plan
+        )
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
   if (loading) {
     return (
       <div className="bg-white rounded-3xl border border-gray-100 p-8 shadow-sm">
@@ -62,14 +80,26 @@ const ActionPlanPage = () => {
                 className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm"
               >
                 <div className="flex gap-4">
-                  <div className="w-11 h-11 rounded-2xl bg-purple-50 text-purple-700 flex items-center justify-center text-xl shrink-0">
-                    ☐
-                  </div>
+                  <button
+                    onClick={() => handleToggle(plan.id)}
+                    className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl shrink-0 transition ${
+                      plan.is_completed
+                        ? "bg-green-50 text-green-600"
+                        : "bg-purple-50 text-purple-700"
+                    }`}
+                  >
+                    {plan.is_completed ? "✓" : "☐"}
+                  </button>
 
                   <div>
                     <h2 className="text-lg font-bold text-slate-900 mb-2">
                       {plan.title}
                     </h2>
+                    {plan.is_completed && (
+                    <p className="text-xs text-green-600 font-medium mb-2">
+                      Completed
+                    </p>
+                    )}
 
                     <p className="text-sm text-slate-600 leading-6">
                       {plan.description}

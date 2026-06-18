@@ -47,3 +47,13 @@ export const getActionPlans = async () => {
   const response = await apiClient.get("/analytics/action-plans/");
   return response.data;
 };
+
+export const toggleActionPlan = async (
+  planId: number
+) => {
+  const response = await apiClient.patch(
+    `/analytics/action-plans/${planId}/toggle/`
+  );
+
+  return response.data;
+};

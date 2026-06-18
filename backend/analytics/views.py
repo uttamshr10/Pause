@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from datetime import timedelta
 from django.utils.timezone import now
 from django.conf import settings
+from rest_framework import status
 
 from .trend_utils import analyze_trend
 from .weekly_utils import generate_weekly_report
@@ -277,3 +278,27 @@ class ActionPlanView(APIView):
             }
             for plan in plans
         ])
+    
+class ActionPlanToggleView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, plan_id):
+        try:
+            plan = ActionPlan.objects.get(
+                id=plan_id,
+                user=request.user
+            )
+
+            plan.is_completed = not plan.is_completed
+            plan.save()
+
+            return Response({
+                "success": True,
+                "is_completed": plan.is_completed
+            })
+
+        except ActionPlan.DoesNotExist:
+            return Response(
+                {"error": "Plan not found"},
+                status=status.HTTP_404_NOT_FOUND
+            )

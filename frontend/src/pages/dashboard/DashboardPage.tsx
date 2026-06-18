@@ -86,7 +86,16 @@ const DashboardPage = () => {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
-                <XAxis dataKey="date" tick={{ fontSize: 12, fill: "#64748B" }} axisLine={false} tickLine={false} />
+                <XAxis
+                dataKey="date"
+                interval={0}
+                tick={{ fontSize: 11, fill: "#64748B" }}
+                angle={-20}
+                textAnchor="end"
+                height={60}
+                axisLine={false}
+                tickLine={false}
+              />
                 <YAxis tick={{ fontSize: 12, fill: "#64748B" }} axisLine={false} tickLine={false} />
                 <Tooltip />
                 <Area
