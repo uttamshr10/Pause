@@ -5,6 +5,7 @@ import {
   getWeeklyTrend,
   getWeeklyReport,
   getStreak,
+  getRecoveryProgress,
 } from "../../api/analyticsApi";
 import { getUserProfile } from "../../api/userApi";
 import {
@@ -25,6 +26,7 @@ const DashboardPage = () => {
   const [weeklyReport, setWeeklyReport] = useState<any>(null);
   const [streak, setStreak] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [recoveryProgress, setRecoveryProgress] = useState<any>(null);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -34,6 +36,7 @@ const DashboardPage = () => {
         getInsight(),
         getStreak(),
         getUserProfile(),
+        getRecoveryProgress(),
       ]);
 
       if (results[0].status === "fulfilled") setTrendData(results[0].value);
@@ -41,6 +44,7 @@ const DashboardPage = () => {
       if (results[2].status === "fulfilled") setInsight(results[2].value.insight);
       if (results[3].status === "fulfilled") setStreak(results[3].value);
       if (results[4].status === "fulfilled") setProfile(results[4].value);
+      if (results[5].status === "fulfilled") setRecoveryProgress(results[5].value);
     };
 
     fetchDashboardData();
@@ -70,7 +74,33 @@ const DashboardPage = () => {
         <StatCard title="Mood Score" value={latest?.mood ?? "--"} subtitle="Scale of 1 to 10" />
         <StatCard title="Current Streak" value={`${streak?.current_streak ?? 0} days`} subtitle="Daily consistency" />
       </div>
+      <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+  <div className="flex justify-between items-start gap-4">
+    <div>
+      <p className="text-sm text-purple-600 font-medium mb-2">
+        Recovery Progress
+      </p>
 
+      <h2 className="text-3xl font-bold text-gray-900">
+        {recoveryProgress?.completion_rate ?? 0}%
+      </h2>
+
+      <p className="text-sm text-gray-500 mt-2">
+        {recoveryProgress?.completed_actions ?? 0} of{" "}
+        {recoveryProgress?.total_actions ?? 0} action plans completed
+      </p>
+    </div>
+  </div>
+
+  <div className="h-2 bg-gray-100 rounded-full overflow-hidden mt-5">
+    <div
+      className="h-full bg-purple-600 rounded-full"
+      style={{
+        width: `${recoveryProgress?.completion_rate ?? 0}%`,
+      }}
+    />
+    </div>
+  </div>
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
           <h2 className="text-xl font-bold text-gray-900">Burnout Trend</h2>

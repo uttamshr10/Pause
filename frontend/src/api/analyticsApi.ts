@@ -57,3 +57,11 @@ export const toggleActionPlan = async (
 
   return response.data;
 };
+
+export const getRecoveryProgress = async () => {
+  const response = await apiClient.get(
+    "/analytics/recovery-progress/"
+  );
+
+  return response.data;
+};

@@ -119,7 +119,18 @@ const ActionPlanPage = () => {
               <p className="text-sm text-purple-600 font-medium mb-2">
                 Plan Progress
               </p>
-
+              <div className="h-2 bg-gray-100 rounded-full overflow-hidden mt-4">
+              <div
+                className="h-full bg-purple-600 rounded-full"
+                style={{
+                  width: `${
+                    plans.length
+                      ? (plans.filter((p) => p.is_completed).length / plans.length) * 100
+                      : 0
+                  }%`,
+                }}
+              />
+            </div>
               <h2 className="text-3xl font-bold text-slate-900">
                 {plans.filter((p) => p.is_completed).length}/{plans.length}
               </h2>

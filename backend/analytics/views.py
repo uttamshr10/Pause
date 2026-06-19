@@ -302,3 +302,31 @@ class ActionPlanToggleView(APIView):
                 {"error": "Plan not found"},
                 status=status.HTTP_404_NOT_FOUND
             )
+
+class RecoveryProgressView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        plans = ActionPlan.objects.filter(
+            user=request.user
+        )
+
+        total = plans.count()
+
+        completed = plans.filter(
+            is_completed=True
+        ).count()
+
+        completion_rate = 0
+
+        if total > 0:
+            completion_rate = round(
+                (completed / total) * 100,
+                1
+            )
+
+        return Response({
+            "total_actions": total,
+            "completed_actions": completed,
+            "completion_rate": completion_rate
+        })

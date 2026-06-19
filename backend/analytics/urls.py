@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import WeeklyTrendView, InsightView, TrendAnalysisView, WeeklyReportView, StreakView, BurnoutPredictionView, ReflectionView, AchievementView, RecommendationView, ActionPlanView, ActionPlanToggleView
+from .views import WeeklyTrendView, InsightView, TrendAnalysisView, WeeklyReportView, StreakView, BurnoutPredictionView, ReflectionView, AchievementView, RecommendationView, ActionPlanView, ActionPlanToggleView, RecoveryProgressView
 
 urlpatterns = [
     path("weekly-trend/", WeeklyTrendView.as_view()),
@@ -13,4 +13,5 @@ urlpatterns = [
     path("recommendations/", RecommendationView.as_view()),
     path("action-plans/", ActionPlanView.as_view()),
     path("action-plans/<int:plan_id>/toggle/", ActionPlanToggleView.as_view()),
+    path("recovery-progress/", RecoveryProgressView.as_view()),
 ]
