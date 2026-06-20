@@ -65,3 +65,11 @@ export const getRecoveryProgress = async () => {
 
   return response.data;
 };
+
+export const getGoalAchievement = async () => {
+  const response = await apiClient.get(
+    "/analytics/goal-achievement/"
+  );
+
+  return response.data;
+};

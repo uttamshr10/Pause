@@ -82,7 +82,7 @@ const ActionPlanPage = () => {
                 <div className="flex gap-4">
                   <button
                     onClick={() => handleToggle(plan.id)}
-                    className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl shrink-0 transition ${
+                    className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl shrink-0 transition cursor-pointer ${
                       plan.is_completed
                         ? "bg-green-50 text-green-600"
                         : "bg-purple-50 text-purple-700"

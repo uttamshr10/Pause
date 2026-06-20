@@ -6,6 +6,7 @@ import {
   getWeeklyReport,
   getStreak,
   getRecoveryProgress,
+  getActionPlans,
 } from "../../api/analyticsApi";
 import { getUserProfile } from "../../api/userApi";
 import {
@@ -27,6 +28,7 @@ const DashboardPage = () => {
   const [streak, setStreak] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [recoveryProgress, setRecoveryProgress] = useState<any>(null);
+  const [actionPlans, setActionPlans] = useState<any[]>([])
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -37,6 +39,7 @@ const DashboardPage = () => {
         getStreak(),
         getUserProfile(),
         getRecoveryProgress(),
+        getActionPlans(),
       ]);
 
       if (results[0].status === "fulfilled") setTrendData(results[0].value);
@@ -45,6 +48,7 @@ const DashboardPage = () => {
       if (results[3].status === "fulfilled") setStreak(results[3].value);
       if (results[4].status === "fulfilled") setProfile(results[4].value);
       if (results[5].status === "fulfilled") setRecoveryProgress(results[5].value);
+      if (results[6].status === "fulfilled") setActionPlans(results[6].value);
     };
 
     fetchDashboardData();
@@ -90,6 +94,7 @@ const DashboardPage = () => {
         {recoveryProgress?.total_actions ?? 0} action plans completed
       </p>
     </div>
+    <TodayActionPlanCard plans={actionPlans} />
   </div>
 
   <div className="h-2 bg-gray-100 rounded-full overflow-hidden mt-5">
@@ -248,5 +253,66 @@ const GoalBar = ({ label, current, goal, suffix }: any) => (
     </div>
   </div>
 );
+
+const TodayActionPlanCard = ({ plans }: any) => {
+  const latestPlans = plans.slice(0, 3);
+
+  return (
+    <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
+      <div className="flex justify-between items-start gap-4 mb-5">
+        <div>
+          <p className="text-sm text-purple-600 font-medium mb-2">
+            Today’s Action Plan
+          </p>
+
+          <h2 className="text-xl font-bold text-gray-900">
+            Recovery tasks for today
+          </h2>
+        </div>
+
+        <Link
+          to="/action-plan"
+          className="text-sm font-medium text-purple-600 hover:text-purple-700"
+        >
+          View all →
+        </Link>
+      </div>
+
+      {latestPlans.length === 0 ? (
+        <p className="text-sm text-gray-500">
+          Submit a daily check-in to generate recovery actions.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {latestPlans.map((plan: any) => (
+            <div
+              key={plan.id}
+              className="flex items-start gap-3 rounded-2xl bg-gray-50 p-4"
+            >
+              <span
+                className={`mt-0.5 h-5 w-5 rounded-full flex items-center justify-center text-xs ${
+                  plan.is_completed
+                    ? "bg-green-100 text-green-600"
+                    : "bg-purple-100 text-purple-600"
+                }`}
+              >
+                {plan.is_completed ? "✓" : "○"}
+              </span>
+
+              <div>
+                <p className="text-sm font-semibold text-gray-900">
+                  {plan.title}
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {plan.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 export default DashboardPage;

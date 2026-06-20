@@ -88,7 +88,7 @@ const DailyCheckInPage = () => {
           key={num}
           type="button"
           onClick={() => updateField(name, num)}
-          className={`h-9 rounded-lg text-xs font-semibold transition ${
+          className={`h-9 rounded-lg text-xs font-semibold cursor-pointer transition ${
             value === num
               ? "bg-purple-600 text-white shadow-sm"
               : "bg-white text-slate-700 border border-gray-200 hover:bg-purple-50 hover:border-purple-300"
@@ -128,7 +128,7 @@ const DailyCheckInPage = () => {
             key={option.value}
             type="button"
             onClick={() => updateField("mood_score", option.value)}
-            className={`rounded-xl border px-2 py-4 min-h-[88px] flex flex-col items-center justify-center transition ${
+            className={`rounded-xl border px-2 py-4 min-h-[88px] cursor-pointer flex flex-col items-center justify-center transition ${
             form.mood_score === option.value
               ? "border-purple-600 bg-purple-50"
               : "border-gray-200 bg-white hover:bg-purple-50"
@@ -214,14 +214,11 @@ const DailyCheckInPage = () => {
 
                   <div className="flex items-center gap-3">
                     <input
-                      type="number"
+                      type="text" inputMode="decimal"
                       value={form.sleep_hours}
                       onChange={(e) =>
-                        updateField("sleep_hours", Number(e.target.value))
+                        updateField("sleep_hours", e.target.value)
                       }
-                      min={0}
-                      max={24}
-                      step={0.5}
                       className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                     <span className="text-sm text-slate-500">hrs</span>
@@ -269,14 +266,11 @@ const DailyCheckInPage = () => {
 
                   <div className="flex items-center gap-3">
                     <input
-                      type="number"
+                      type="text" inputMode="decimal"
                       value={form.recovery_time}
                       onChange={(e) =>
-                        updateField("recovery_time", Number(e.target.value))
+                        updateField("recovery_time", e.target.value)
                       }
-                      min={0}
-                      max={12}
-                      step={0.5}
                       className="w-full rounded-xl border border-gray-200 px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                     <span className="text-sm text-slate-500">hrs</span>
@@ -311,7 +305,7 @@ const DailyCheckInPage = () => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="rounded-xl bg-purple-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 transition disabled:opacity-60"
+                  className="cursor-pointer rounded-xl bg-purple-600 px-8 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 transition disabled:opacity-60"
                 >
                   {loading ? "Submitting..." : "Submit Check-in"}
                 </button>

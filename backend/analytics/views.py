@@ -330,3 +330,50 @@ class RecoveryProgressView(APIView):
             "completed_actions": completed,
             "completion_rate": completion_rate
         })
+
+
+class GoalAchievementView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        profile = user.profile
+
+        checkins = DailyCheckIn.objects.filter(
+            user=user
+        ).order_by("-checkin_date")[:7]
+
+        total_days = len(checkins)
+
+        if total_days == 0:
+            return Response({
+                "sleep_rate": 0,
+                "recovery_rate": 0
+            })
+
+        sleep_goal_days = len([
+            c for c in checkins
+            if c.sleep_hours >= profile.sleep_goal
+        ])
+
+        recovery_goal_days = len([
+            c for c in checkins
+            if c.recovery_time >= profile.recovery_goal
+        ])
+
+        return Response({
+            "sleep_goal_days": sleep_goal_days,
+            "sleep_total_days": total_days,
+            "sleep_rate": round(
+                sleep_goal_days / total_days * 100,
+                1
+            ),
+
+            "recovery_goal_days": recovery_goal_days,
+            "recovery_total_days": total_days,
+            "recovery_rate": round(
+                recovery_goal_days / total_days * 100,
+                1
+            )
+        })

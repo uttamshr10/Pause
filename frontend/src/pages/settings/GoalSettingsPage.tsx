@@ -3,18 +3,20 @@ import { getUserProfile, updateUserProfile } from "../../api/userApi";
 
 const GoalSettingsPage = () => {
   const [form, setForm] = useState({
-    sleep_goal: 7,
-    recovery_goal: 1,
+    sleep_goal: "",
+    recovery_goal: "",
   });
 
   const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchProfile = async () => {
       const data = await getUserProfile();
+
       setForm({
-        sleep_goal: data.sleep_goal,
-        recovery_goal: data.recovery_goal,
+        sleep_goal: String(data.sleep_goal ?? 7),
+        recovery_goal: String(data.recovery_goal ?? 1),
       });
     };
 
@@ -24,15 +26,36 @@ const GoalSettingsPage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({
       ...form,
-      [e.target.name]: Number(e.target.value),
+      [e.target.name]: e.target.value,
     });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSuccess("");
+    setError("");
 
-    await updateUserProfile(form);
+    const sleepGoal = Number(form.sleep_goal);
+    const recoveryGoal = Number(form.recovery_goal);
+
+    if (Number.isNaN(sleepGoal) || sleepGoal < 1 || sleepGoal > 24) {
+      setError("Sleep goal must be between 1 and 24 hours.");
+      return;
+    }
+
+    if (
+      Number.isNaN(recoveryGoal) ||
+      recoveryGoal < 0 ||
+      recoveryGoal > 12
+    ) {
+      setError("Recovery goal must be between 0 and 12 hours.");
+      return;
+    }
+
+    await updateUserProfile({
+      sleep_goal: sleepGoal,
+      recovery_goal: recoveryGoal,
+    });
 
     setSuccess("Goals updated successfully.");
   };
@@ -58,18 +81,22 @@ const GoalSettingsPage = () => {
           </div>
         )}
 
+        {error && (
+          <div className="bg-red-50 border border-red-100 text-red-700 p-4 rounded-2xl text-sm">
+            {error}
+          </div>
+        )}
+
         <div>
           <label className="text-sm font-semibold text-slate-900">
             Sleep Goal (hours)
           </label>
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             name="sleep_goal"
             value={form.sleep_goal}
             onChange={handleChange}
-            min="0"
-            max="24"
-            step="0.5"
             className="mt-2 w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
         </div>
@@ -79,20 +106,18 @@ const GoalSettingsPage = () => {
             Recovery Goal (hours)
           </label>
           <input
-            type="number"
+            type="text"
+            inputMode="decimal"
             name="recovery_goal"
             value={form.recovery_goal}
             onChange={handleChange}
-            min="0"
-            max="12"
-            step="0.5"
             className="mt-2 w-full border border-gray-200 p-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
         </div>
 
         <button
           type="submit"
-          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl text-sm font-semibold"
+          className="cursor-pointer bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl text-sm font-semibold"
         >
           Save Goals
         </button>

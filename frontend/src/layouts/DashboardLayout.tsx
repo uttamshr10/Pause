@@ -62,13 +62,13 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         <nav className="space-y-2">
           {navItem("/dashboard", "Dashboard")}
           {navItem("/check-in", "Daily Check-in")}
-          {navItem("/check-in/history", "History")}
+          {navItem("/action-plan", "Action Plan")}
           {navItem("/reports", "Reports")}
           {navItem("/journal", "Journal")}
-          {navItem("/achievements", "Achievements")}
-          {navItem("/recommendations", "Recommendations")}
           {navItem("/reflection", "Reflection")}
-          {navItem("/action-plan", "Action Plan")}
+          {navItem("/recommendations", "Recommendations")}
+          {navItem("/achievements", "Achievements")}
+          {navItem("/check-in/history", "History")}
         </nav>
 
       </div>
@@ -90,7 +90,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
             <button
               onClick={handleLogout}
-              className="text-sm text-red-500 hover:underline"
+              className="text-sm text-red-500 hover:underline cursor-pointer"
             >
               Logout
             </button>
