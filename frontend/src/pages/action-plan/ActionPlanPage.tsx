@@ -76,17 +76,21 @@ const ActionPlanPage = () => {
           <div className="lg:col-span-2 space-y-5">
             {plans.map((plan) => (
               <div
-                key={plan.id}
-                className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm"
-              >
+              key={plan.id}
+              className={`rounded-3xl border p-6 shadow-sm transition ${
+                plan.is_completed
+                  ? "bg-green-50 border-green-100"
+                  : "bg-white border-gray-100"
+              }`}
+            >
                 <div className="flex gap-4">
                   <button
                     onClick={() => handleToggle(plan.id)}
-                    className={`w-11 h-11 rounded-2xl flex items-center justify-center text-xl shrink-0 transition cursor-pointer ${
-                      plan.is_completed
-                        ? "bg-green-50 text-green-600"
-                        : "bg-purple-50 text-purple-700"
-                    }`}
+                    className={`cursor-pointer w-11 h-11 rounded-2xl flex items-center justify-center text-lg shrink-0 transition ${
+                    plan.is_completed
+                      ? "bg-green-600 text-white"
+                      : "bg-purple-50 text-purple-700 hover:bg-purple-100"
+                  }`}
                   >
                     {plan.is_completed ? "✓" : "☐"}
                   </button>
@@ -95,11 +99,13 @@ const ActionPlanPage = () => {
                     <h2 className="text-lg font-bold text-slate-900 mb-2">
                       {plan.title}
                     </h2>
-                    {plan.is_completed && (
-                    <p className="text-xs text-green-600 font-medium mb-2">
-                      Completed
+                    <p
+                      className={`text-xs font-medium mb-2 ${
+                        plan.is_completed ? "text-green-700" : "text-slate-400"
+                      }`}
+                    >
+                      {plan.is_completed ? "Completed" : "Pending action"}
                     </p>
-                    )}
 
                     <p className="text-sm text-slate-600 leading-6">
                       {plan.description}
