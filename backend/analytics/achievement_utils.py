@@ -1,6 +1,19 @@
-def generate_achievements(checkins):
-    achievements = []
+def build_achievement(title, icon, description, rarity, progress, target):
+    unlocked = progress >= target
 
+    return {
+        "title": title,
+        "icon": icon,
+        "description": description,
+        "rarity": rarity,
+        "status": "unlocked" if unlocked else "locked",
+        "progress": progress,
+        "target": target,
+        "remaining": max(target - progress, 0),
+    }
+
+
+def generate_achievements(checkins):
     total_checkins = len(checkins)
 
     notes_count = len([
@@ -18,39 +31,169 @@ def generate_achievements(checkins):
         if c.sleep_hours >= 7
     ])
 
-    if total_checkins >= 1:
-        achievements.append({
-            "title": "First Check-in",
-            "description": "You completed your first wellness check-in.",
-            "status": "unlocked"
-        })
+    recovery_days = len([
+        c for c in checkins
+        if c.recovery_time >= 1
+    ])
 
-    if total_checkins >= 7:
-        achievements.append({
-            "title": "Consistent Tracker",
-            "description": "You completed at least 7 check-ins.",
-            "status": "unlocked"
-        })
+    high_focus_days = len([
+        c for c in checkins
+        if c.focus_level >= 7
+    ])
 
-    if notes_count >= 1:
-        achievements.append({
-            "title": "First Reflection",
-            "description": "You added your first journal note.",
-            "status": "unlocked"
-        })
+    low_stress_days = len([
+        c for c in checkins
+        if c.stress_level <= 4
+    ])
 
-    if good_sleep_days >= 5:
-        achievements.append({
-            "title": "Sleep Builder",
-            "description": "You slept 7+ hours on at least 5 days.",
-            "status": "unlocked"
-        })
+    high_energy_days = len([
+        c for c in checkins
+        if c.energy_level >= 7
+    ])
 
-    if low_risk_days >= 5:
-        achievements.append({
-            "title": "Low Risk Week",
-            "description": "You maintained low burnout risk across multiple check-ins.",
-            "status": "unlocked"
-        })
+    action_completed_days = len([
+        c for c in checkins
+        if c.burnout_score <= 40
+    ])
 
-    return achievements
+    achievements = [
+        build_achievement(
+            "First Step",
+            "🌱",
+            "Submit your first wellness check-in.",
+            "common",
+            total_checkins,
+            1,
+        ),
+        build_achievement(
+            "Consistency Starter",
+            "🔥",
+            "Complete 7 wellness check-ins.",
+            "common",
+            total_checkins,
+            7,
+        ),
+        build_achievement(
+            "Momentum Builder",
+            "⚡",
+            "Complete 14 wellness check-ins.",
+            "rare",
+            total_checkins,
+            14,
+        ),
+        build_achievement(
+            "Wellness Warrior",
+            "🏆",
+            "Complete 30 wellness check-ins.",
+            "legendary",
+            total_checkins,
+            30,
+        ),
+        build_achievement(
+            "First Reflection",
+            "📔",
+            "Write your first journal note.",
+            "common",
+            notes_count,
+            1,
+        ),
+        build_achievement(
+            "Reflective Thinker",
+            "📝",
+            "Write journal notes on 5 check-ins.",
+            "rare",
+            notes_count,
+            5,
+        ),
+        build_achievement(
+            "Sleep Builder",
+            "🌙",
+            "Sleep 7+ hours on 5 check-ins.",
+            "common",
+            good_sleep_days,
+            5,
+        ),
+        build_achievement(
+            "Sleep Champion",
+            "💤",
+            "Sleep 7+ hours on 10 check-ins.",
+            "rare",
+            good_sleep_days,
+            10,
+        ),
+        build_achievement(
+            "Recovery Keeper",
+            "🧘",
+            "Protect at least 1 hour of recovery on 5 days.",
+            "common",
+            recovery_days,
+            5,
+        ),
+        build_achievement(
+            "Recovery Master",
+            "🌿",
+            "Protect at least 1 hour of recovery on 10 days.",
+            "rare",
+            recovery_days,
+            10,
+        ),
+        build_achievement(
+            "Low Risk Week",
+            "🛡️",
+            "Maintain low burnout risk on 5 check-ins.",
+            "rare",
+            low_risk_days,
+            5,
+        ),
+        build_achievement(
+            "Burnout Guardian",
+            "🦾",
+            "Maintain low burnout risk on 15 check-ins.",
+            "legendary",
+            low_risk_days,
+            15,
+        ),
+        build_achievement(
+            "Calm Mind",
+            "🍃",
+            "Keep stress at 4/10 or below on 5 check-ins.",
+            "common",
+            low_stress_days,
+            5,
+        ),
+        build_achievement(
+            "Focus Flow",
+            "🎯",
+            "Reach focus level 7+ on 5 check-ins.",
+            "common",
+            high_focus_days,
+            5,
+        ),
+        build_achievement(
+            "Energy Booster",
+            "🔋",
+            "Reach energy level 7+ on 5 check-ins.",
+            "common",
+            high_energy_days,
+            5,
+        ),
+        build_achievement(
+            "Stable Routine",
+            "✅",
+            "Keep burnout score at 40 or below on 7 check-ins.",
+            "rare",
+            action_completed_days,
+            7,
+        ),
+    ]
+
+    unlocked_count = len([
+        a for a in achievements
+        if a["status"] == "unlocked"
+    ])
+
+    return {
+        "total_possible": len(achievements),
+        "total_unlocked": unlocked_count,
+        "achievements": achievements,
+    }

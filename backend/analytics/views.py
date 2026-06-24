@@ -237,12 +237,9 @@ class AchievementView(APIView):
             user=request.user
         ).order_by("-checkin_date")
 
-        achievements = generate_achievements(checkins)
+        result = generate_achievements(checkins)
 
-        return Response({
-            "total_unlocked": len(achievements),
-            "achievements": achievements
-        })
+        return Response(result)
     
 class RecommendationView(APIView):
     permission_classes = [IsAuthenticated]
