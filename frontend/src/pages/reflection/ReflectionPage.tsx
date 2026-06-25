@@ -43,7 +43,7 @@ const ReflectionPage = () => {
         </p>
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+      <div className="lg:col-span-3 bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
         <p className="text-sm text-purple-600 font-medium mb-2">
           Reflection Summary
         </p>
@@ -98,6 +98,32 @@ const ReflectionPage = () => {
             {reflection?.focus_area ||
               "Add more check-ins and notes to generate a focus area."}
           </p>
+        </div>
+         <div className="lg:col-span-3 bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
+          <p className="text-sm text-purple-600 font-medium mb-2">
+            Detected Patterns
+          </p>
+
+          <h2 className="text-xl font-bold text-slate-900 mb-5">
+            What your data suggests
+          </h2>
+
+          {reflection?.patterns?.length > 0 ? (
+            <div className="space-y-3">
+              {reflection.patterns.map((item: string, index: number) => (
+                <div
+                  key={index}
+                  className="rounded-2xl bg-gray-50 border border-gray-100 p-4 text-sm text-slate-600 leading-6"
+                >
+                  {item}
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500">
+              No major patterns detected yet. Add more check-ins to improve reflection analysis.
+            </p>
+          )}
         </div>
       </div>
     </div>
