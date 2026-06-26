@@ -88,7 +88,7 @@ const JournalPage = () => {
                   </p>
 
                   <p className="text-sm text-slate-500 mt-1">
-                    Burnout Score: {entry.burnout_score}/100
+                    Wellness note · Burnout {entry.burnout_score}/100
                   </p>
                 </div>
 
@@ -103,9 +103,11 @@ const JournalPage = () => {
                 </div>
               </div>
 
+              <div className="rounded-2xl bg-slate-50 border border-slate-100 p-4">
               <p className="text-slate-700 leading-7 text-sm">
-                {entry.notes}
+                “{entry.notes}”
               </p>
+            </div>
             </div>
           ))}
         </div>

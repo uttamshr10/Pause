@@ -59,31 +59,39 @@ const RecommendationsPage = () => {
           </p>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 gap-5">
-          {recommendations.map((item, index) => (
-            <div
-              key={index}
-              className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm"
-            >
-              <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-2xl mb-4">
-                💡
-              </div>
+    <div className="grid md:grid-cols-2 gap-5">
+    {recommendations.map((item, index) => (
+      <div
+        key={index}
+        className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition"
+      >
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-2xl shrink-0">
+            💡
+          </div>
 
-              <p className="text-sm text-purple-600 font-medium mb-2">
-                Recommendation
-              </p>
+          <div>
+            <p className="text-sm text-purple-600 font-medium mb-1">
+              Recommended Action
+            </p>
 
-              <p className="text-sm text-slate-600 leading-6">
-                {item.content}
-              </p>
+            <h2 className="text-lg font-bold text-slate-900 mb-3">
+              Wellness Step #{index + 1}
+            </h2>
 
-              <p className="text-xs text-slate-400 mt-5">
-                Generated from your wellness data
-              </p>
-            </div>
-          ))}
+            <p className="text-sm text-slate-600 leading-6">
+              {item.content}
+            </p>
+
+            <p className="text-xs text-slate-400 mt-5">
+              Based on your latest wellness signals
+            </p>
+          </div>
         </div>
-      )}
+      </div>
+    ))}
+  </div>
+        )}
     </div>
   );
 };

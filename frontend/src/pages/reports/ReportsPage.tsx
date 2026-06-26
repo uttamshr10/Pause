@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { getWeeklyReport, getTrendAnalysis,getBurnoutPrediction } from "../../api/analyticsApi";
-import { getUserProfile } from "../../api/userApi";
 
 type WeeklyReport = {
   average_burnout: number;
@@ -14,24 +13,21 @@ const ReportsPage = () => {
   const [report, setReport] = useState<WeeklyReport | null>(null);
   const [trendAnalysis, setTrendAnalysis] = useState<any>(null);
   const [prediction, setPrediction] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchReport = async () => {
       try {
-        const [reportData, trendData, predictionData, profileData] =
+        const [reportData, trendData, predictionData] =
         await Promise.all([
           getWeeklyReport(),
           getTrendAnalysis(),
-          getBurnoutPrediction(),
-          getUserProfile(),
+          getBurnoutPrediction()
         ]);
 
       setReport(reportData);
       setTrendAnalysis(trendData);
       setPrediction(predictionData);
-      setProfile(profileData);
       } catch (err) {
         console.log(err);
       } finally {
@@ -64,50 +60,27 @@ const ReportsPage = () => {
   }
 
   const metrics = [
-    {
-      label: "Average Burnout",
-      value: report.average_burnout,
-      suffix: "/100",
-    },
-    {
-      label: "Average Stress",
-      value: report.average_stress,
-      suffix: "/10",
-    },
-    {
-      label: "Average Sleep",
-      value: report.average_sleep,
-      suffix: " hrs",
-    },
-    {
-      label: "Average Energy",
-      value: report.average_energy,
-      suffix: "/10",
-    },
-  ];
-  const riskLevel =
-  report.average_burnout >= 61
-    ? "High"
-    : report.average_burnout >= 31
-    ? "Moderate"
-    : "Low";
-
-const strongestArea =
-  report.average_sleep >= 7
-    ? "Sleep"
-    : report.average_energy >= 6
-    ? "Energy"
-    : "Recovery";
-
-const focusArea =
-  report.average_stress >= 7
-    ? "Stress"
-    : report.average_sleep < 7
-    ? "Sleep"
-    : (report as any).average_recovery < 1
-    ? "Recovery"
-    : "Maintain Routine";
-
+  {
+    label: "Burnout Score",
+    value: report.average_burnout,
+    suffix: "/100",
+  },
+  {
+    label: "Stress Level",
+    value: report.average_stress,
+    suffix: "/10",
+  },
+  {
+    label: "Sleep Duration",
+    value: report.average_sleep,
+    suffix: " hrs",
+  },
+  {
+    label: "Energy Level",
+    value: report.average_energy,
+    suffix: "/10",
+  },
+];
   return (
     <div className="space-y-8">
       <div className="bg-gradient-to-br from-purple-600 to-purple-500 rounded-3xl p-8 text-white shadow-lg">
@@ -124,15 +97,31 @@ const focusArea =
       </div>
 
       <div className="grid md:grid-cols-4 gap-5">
-        {metrics.map((item) => (
-          <div
-            key={item.label}
-            className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm"
-          >
-            <p className="text-sm text-slate-500 mb-2">{item.label}</p>
-            <h2 className="text-3xl font-bold text-slate-900">
+        {metrics.map((item, index) => (
+        <div
+          key={item.label}
+          className={`rounded-3xl border p-6 shadow-sm ${
+            index === 0
+              ? "bg-purple-600 text-white border-purple-600"
+              : "bg-white border-gray-100"
+          }`}
+        >
+            <p
+              className={`text-sm mb-2 ${
+                index === 0 ? "text-purple-100" : "text-slate-500"
+              }`}
+            >{item.label}</p>
+            <h2
+              className={`text-3xl font-bold ${
+                index === 0 ? "text-white" : "text-slate-900"
+              }`}
+            >
               {item.value}
-              <span className="text-base text-slate-400 ml-1">
+              <span
+                className={`text-base ml-1 ${
+                  index === 0 ? "text-purple-200" : "text-slate-400"
+                }`}
+              >
                 {item.suffix}
               </span>
             </h2>
@@ -143,11 +132,11 @@ const focusArea =
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
           <h2 className="text-xl font-bold text-slate-900 mb-2">
-            Report Summary
+            Weekly Insights
           </h2>
 
           <p className="text-sm text-slate-500 mb-5">
-            Key observations generated from your weekly wellness data.
+            What your last 7 days of wellness data reveal.
           </p>
 
           <div className="space-y-3">
@@ -161,34 +150,37 @@ const focusArea =
             ))}
           </div>
         </div>
-        <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
-  <p className="text-sm text-purple-600 font-medium mb-2">
-    Report Snapshot
-  </p>
-
+          <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
   <h2 className="text-xl font-bold text-slate-900 mb-5">
-    Weekly Overview
+    Weekly Reflection
   </h2>
 
-  <div className="space-y-4">
-    <div className="bg-gray-50 rounded-2xl p-4">
-      <p className="text-xs text-slate-500 mb-1">Risk Level</p>
-      <p className="text-lg font-bold text-slate-900">
-        {riskLevel}
+  <div className="space-y-5">
+    <div>
+      <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">
+        Strongest Area
+      </p>
+      <p className="font-semibold text-green-600">
+        Energy & Recovery
       </p>
     </div>
 
-    <div className="bg-gray-50 rounded-2xl p-4">
-      <p className="text-xs text-slate-500 mb-1">Strongest Area</p>
-      <p className="text-lg font-bold text-slate-900">
-        {strongestArea}
+    <div>
+      <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">
+        Needs Attention
+      </p>
+      <p className="font-semibold text-orange-600">
+        Sleep Consistency
       </p>
     </div>
 
-    <div className="bg-purple-50 border border-purple-100 rounded-2xl p-4">
-      <p className="text-xs text-purple-600 mb-1">Focus Area</p>
-      <p className="text-lg font-bold text-purple-700">
-        {focusArea}
+    <div>
+      <p className="text-xs text-slate-500 uppercase tracking-wide mb-1">
+        Next Focus
+      </p>
+      <p className="text-sm text-slate-600 leading-6">
+        Try maintaining your sleep goal and daily recovery routine for the next
+        seven days to improve your overall wellness trend.
       </p>
     </div>
   </div>
