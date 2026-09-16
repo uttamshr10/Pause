@@ -99,11 +99,16 @@ class InsightView(APIView):
                 insight_text = response.choices[0].message.content.strip()
 
             except Exception:
-                insight_text = "AI insight unavailable. Showing fallback insight."
+                insight_text = self.generate_static_insight(
+                    checkins,
+                    trend_result
+                )
 
         else:
-            # ✅ STATIC FALLBACK (SMART)
-            insight_text = self.generate_static_insight(checkins, trend_result)
+            insight_text = self.generate_static_insight(
+                checkins,
+                trend_result
+            )
 
         # Save insight
         Insight.objects.create(user=user, content=insight_text)
@@ -205,7 +210,7 @@ class BurnoutPredictionView(APIView):
 
         checkins = DailyCheckIn.objects.filter(
             user=user
-        ).order_by("-checkin_date")[:7]
+        ).order_by("-checkin_date")[:30]
 
         checkins = list(checkins)[::-1]
 

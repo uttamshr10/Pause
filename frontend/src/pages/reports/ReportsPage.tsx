@@ -202,22 +202,107 @@ const ReportsPage = () => {
   </div>
 
   <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm">
-    <p className="text-sm text-purple-600 font-medium mb-2">
-      Burnout Prediction
-    </p>
+  <div className="flex items-start justify-between gap-4 mb-4">
+    <div>
+      <p className="text-sm text-purple-600 font-medium mb-1">
+        Burnout Prediction
+      </p>
 
-    <h2 className="text-xl font-bold text-slate-900 mb-3">
-      {prediction?.predicted_risk === "high"
-        ? "High Risk Forecast"
-        : prediction?.prediction_status === "stable_or_improving"
-        ? "Stable Pattern"
-        : "Prediction Pending"}
-    </h2>
+      <h2 className="text-xl font-bold text-slate-900">
+        Linear Regression Forecast
+      </h2>
+    </div>
 
-    <p className="text-sm text-slate-600 leading-6">
-      {prediction?.message || "Submit more check-ins to generate prediction."}
-    </p>
+    {prediction?.predicted_risk && (
+      <span className="px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-semibold capitalize">
+        {prediction.predicted_risk} Risk
+      </span>
+    )}
   </div>
+
+  {prediction?.prediction_status === "not_enough_data" ? (
+    <p className="text-sm text-slate-600">
+      {prediction.message}
+    </p>
+  ) : (
+    <>
+      <div className="grid grid-cols-3 gap-3 mb-5">
+        <div className="rounded-2xl bg-slate-50 p-3">
+          <p className="text-xs text-slate-500 mb-1">
+            Tomorrow
+          </p>
+          <p className="font-bold text-slate-900">
+            {prediction?.predicted_tomorrow}/100
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-slate-50 p-3">
+          <p className="text-xs text-slate-500 mb-1">
+            3 Days
+          </p>
+          <p className="font-bold text-slate-900">
+            {prediction?.predicted_3_days}/100
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-slate-50 p-3">
+          <p className="text-xs text-slate-500 mb-1">
+            7 Days
+          </p>
+          <p className="font-bold text-slate-900">
+            {prediction?.predicted_7_days}/100
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-2 mb-4">
+        <div className="flex justify-between text-sm">
+          <span className="text-slate-500">
+            Trend
+          </span>
+
+          <span className="font-semibold text-slate-900 capitalize">
+            {prediction?.prediction_status}
+          </span>
+        </div>
+
+        <div className="flex justify-between text-sm">
+          <span className="text-slate-500">
+            Slope
+          </span>
+
+          <span className="font-semibold text-slate-900">
+            {prediction?.slope}
+          </span>
+        </div>
+
+        <div className="flex justify-between text-sm">
+          <span className="text-slate-500">
+            R²
+          </span>
+
+          <span className="font-semibold text-slate-900">
+            {prediction?.r_squared}
+          </span>
+        </div>
+
+        <div className="flex justify-between text-sm">
+          <span className="text-slate-500">
+            Data Used
+          </span>
+
+          <span className="font-semibold text-slate-900">
+            {prediction?.data_points} check-ins
+          </span>
+        </div>
+      </div>
+
+      <p className="text-sm text-slate-600 leading-6">
+        {prediction?.message}
+      </p>
+    </>
+  )}
+</div>
 </div>
     </div>
   );
