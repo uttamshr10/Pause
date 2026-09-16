@@ -73,3 +73,11 @@ export const getGoalAchievement = async () => {
 
   return response.data;
 };
+
+export const getWellnessPatterns = async () => {
+  const response = await apiClient.get(
+    "/analytics/wellness-patterns/"
+  );
+
+  return response.data;
+};

@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.utils.timezone import now
 from django.conf import settings
 from rest_framework import status
+from .kmeans_utils import kmeans_clustering
 
 from .trend_utils import analyze_trend
 from .weekly_utils import generate_weekly_report
@@ -222,11 +223,31 @@ class ReflectionView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        checkins = DailyCheckIn.objects.filter(
+
+        # Recent data for existing rule-based reflection
+        recent_checkins = DailyCheckIn.objects.filter(
             user=request.user
         ).order_by("-checkin_date")[:14]
 
-        reflection = generate_static_reflection(checkins)
+        reflection = generate_static_reflection(
+            recent_checkins
+        )
+
+        # Full history for K-Means pattern discovery
+        historical_checkins = DailyCheckIn.objects.filter(
+            user=request.user
+        ).order_by("checkin_date")
+
+        historical_checkins = list(
+            historical_checkins
+        )
+
+        clustering = kmeans_clustering(
+            historical_checkins,
+            k=3
+        )
+
+        reflection["wellness_patterns"] = clustering
 
         return Response(reflection)
     
@@ -375,3 +396,22 @@ class GoalAchievementView(APIView):
                 1
             )
         })
+
+
+class WellnessPatternView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        checkins = DailyCheckIn.objects.filter(
+            user=request.user
+        ).order_by("checkin_date")
+
+        checkins = list(checkins)
+
+        result = kmeans_clustering(
+            checkins,
+            k=3
+        )
+
+        return Response(result)
