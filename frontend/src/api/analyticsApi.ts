@@ -81,3 +81,11 @@ export const getWellnessPatterns = async () => {
 
   return response.data;
 };
+
+export const getKNNRiskAnalysis = async () => {
+  const response = await apiClient.get(
+    "/analytics/knn-risk-analysis/"
+  );
+
+  return response.data;
+};

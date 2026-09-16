@@ -5,7 +5,7 @@ from .views import (WeeklyTrendView, InsightView,
     ReflectionView, AchievementView, 
     RecommendationView, ActionPlanView, 
     ActionPlanToggleView, RecoveryProgressView,
-    WellnessPatternView
+    WellnessPatternView, KNNRiskAnalysisView,
 
 )
 urlpatterns = [
@@ -22,4 +22,8 @@ urlpatterns = [
     path("action-plans/<int:plan_id>/toggle/", ActionPlanToggleView.as_view()),
     path("recovery-progress/", RecoveryProgressView.as_view()),
     path("wellness-patterns/",WellnessPatternView.as_view()),
+    path(
+    "knn-risk-analysis/",
+    KNNRiskAnalysisView.as_view()
+),
 ]

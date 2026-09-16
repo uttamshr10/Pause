@@ -6,6 +6,7 @@ from django.utils.timezone import now
 from django.conf import settings
 from rest_framework import status
 from .kmeans_utils import kmeans_clustering
+from .knn_utils import knn_risk_analysis
 
 from .trend_utils import analyze_trend
 from .weekly_utils import generate_weekly_report
@@ -412,6 +413,24 @@ class WellnessPatternView(APIView):
         result = kmeans_clustering(
             checkins,
             k=3
+        )
+
+        return Response(result)
+
+class KNNRiskAnalysisView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+
+        checkins = DailyCheckIn.objects.filter(
+            user=request.user
+        ).order_by("checkin_date")
+
+        checkins = list(checkins)
+
+        result = knn_risk_analysis(
+            checkins,
+            k=5
         )
 
         return Response(result)
