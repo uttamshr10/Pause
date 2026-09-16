@@ -7,7 +7,6 @@ import DailyCheckInPage from "./pages/checkin/DailyCheckInPage";
 import CheckInHistoryPage from "./pages/checkin/CheckInHistoryPage";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
-import OnboardingPage from "./pages/onboarding/OnboardingPage";
 import ReportsPage from "./pages/reports/ReportsPage";
 import JournalPage from "./pages/journal/JournalPage";
 import GoalSettingsPage from "./pages/settings/GoalSettingsPage";
@@ -54,14 +53,6 @@ function App() {
               <DashboardLayout>
                 <CheckInHistoryPage />
               </DashboardLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/onboarding"
-          element={
-            <ProtectedRoute>
-              <OnboardingPage />
             </ProtectedRoute>
           }
         />
